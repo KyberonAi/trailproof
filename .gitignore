@@ -40,6 +40,8 @@ coverage/
 # Trailproof
 .trailproof/
 
-# Ignore
+# Planning docs (not repo artifacts)
 SPEC.md
 USE-CASES.md
+MARKET-ANALYSIS.md
+claude-code-workflow.md
