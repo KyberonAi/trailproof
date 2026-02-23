@@ -28,7 +28,7 @@ feature/core-api
 - [x] **Task 13:** Trailproof class with emit() (TS mirror) — mirror Task 4: constructor, emit with validation and hashing; tests — scope: `typescript`, complexity: `large`
 - [x] **Task 14:** query(), getTrace(), verify(), flush() (TS mirror) — mirror Tasks 5-6: all query/verify methods; tests — scope: `typescript`, complexity: `large`
 - [x] **Task 15:** HMAC signer (TS mirror) — mirror Task 7: HMAC-SHA256 with crypto.timingSafeEqual; tests — scope: `typescript`, complexity: `medium`
-- [ ] **Task 16:** JSONL file store (TS mirror) — mirror Task 8: JSONL with fs, permissions, recovery; tests — scope: `typescript`, complexity: `large`
+- [x] **Task 16:** JSONL file store (TS mirror) — mirror Task 8: JSONL with fs, permissions, recovery; tests — scope: `typescript`, complexity: `large`
 - [ ] **Task 17:** Public API exports (TS mirror) — wire up index.ts re-exports, ensure `npm run all` passes cleanly — scope: `typescript`, complexity: `small`
 
 ### Shared

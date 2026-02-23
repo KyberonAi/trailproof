@@ -7,6 +7,7 @@ import { GENESIS_HASH, computeHash } from "./chain.js";
 import { SignatureError, ValidationError } from "./errors.js";
 import { signEvent, verifySignature } from "./signer.js";
 import type { TrailStore } from "./stores/base.js";
+import { JsonlStore } from "./stores/jsonl.js";
 import { MemoryStore } from "./stores/memory.js";
 import type { QueryFilters, QueryResult, TrailEvent, VerifyResult } from "./types.js";
 
@@ -84,8 +85,7 @@ export class Trailproof {
           "Trailproof: missing required parameter — path is required for jsonl store",
         );
       }
-      // Lazy import — JsonlStore will be implemented in Task 16
-      throw new ValidationError("Trailproof: jsonl store not yet implemented in TypeScript");
+      this._store = new JsonlStore(options.path);
     } else {
       throw new ValidationError(`Trailproof: invalid store type — '${storeType}' is not supported`);
     }
