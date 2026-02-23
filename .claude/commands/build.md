@@ -1,26 +1,60 @@
+---
+description: Implement the next unchecked task from a plan
+argument-hint: Feature slug (e.g., "hash-chain-engine")
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash(make *), Bash(npm run *), Bash(uv *), Bash(git add *), Bash(git commit *), Bash(git status), Bash(git diff *)
+---
+
+You are implementing one task from the Trailproof build plan.
+
+User input: $ARGUMENTS
+
+## Step 1. Read the plan
+
 Read .claude/plans/$ARGUMENTS.md.
 
-Identify the FIRST unchecked task (- [ ]) in the plan.
+If the file doesn't exist, stop and say:
+"No plan found at .claude/plans/$ARGUMENTS.md. Run /plan first."
 
-Before implementing, read the relevant CLAUDE.md:
-- If the task scope is `python`: read python/CLAUDE.md
-- If the task scope is `typescript`: read typescript/CLAUDE.md
-- If the task scope is `both`: read both
+Identify the FIRST unchecked task (`- [ ]`).
 
-If any skills exist in .claude/skills/ relevant to this task, read them too.
+If all tasks are checked, stop and say:
+"All tasks complete. Run /review $ARGUMENTS to check acceptance criteria."
 
-Implement that single task only. Then:
+## Step 2. Read context
+
+Before implementing, read:
+- If task scope is `python`: read python/CLAUDE.md
+- If task scope is `typescript`: read typescript/CLAUDE.md
+- If task scope is `both`: read both
+- Read .claude/specs/$ARGUMENTS.md for reference
+- If any skills exist in .claude/skills/ relevant to this task, read them
+
+## Step 3. Implement the single task
+
+Write the code for this one task only.
+
+## Step 4. Run checks
 
 1. If Python: run `make all` in python/. Fix any lint, type, or test failures.
 2. If TypeScript: run `npm run all` in typescript/. Fix any lint, type, or test failures.
 3. If both: run both.
-4. Check off the completed task in .claude/plans/$ARGUMENTS.md (change `- [ ]` to `- [x]`)
-5. Commit with a conventional commit message (feat/fix/chore/docs/test)
+
+Do NOT move on until all checks pass.
+
+## Step 5. Update the plan
+
+Check off the completed task in .claude/plans/$ARGUMENTS.md (change `- [ ]` to `- [x]`).
+
+## Step 6. Commit
+
+Stage the changed files and commit with a conventional commit message (feat/fix/chore/docs/test).
+
+## Step 7. Report
 
 Stop and report:
-- What was done
-- Test results
-- Next unchecked task in the plan
+- **Done:** what was implemented
+- **Tests:** pass/fail summary
+- **Next:** the next unchecked task (or "all done")
 
 Rules:
 - Do NOT continue to the next task automatically

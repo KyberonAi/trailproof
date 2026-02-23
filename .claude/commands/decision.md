@@ -1,8 +1,24 @@
-Check existing ADRs in .claude/decisions/ to determine the next number.
+---
+description: Create an Architecture Decision Record (ADR)
+argument-hint: Decision topic in kebab-case (e.g., "canonical-json-algorithm")
+allowed-tools: Read, Write, Glob
+---
 
-Create .claude/decisions/ADR-[next number]-$ARGUMENTS.md with:
+You are creating an ADR for the Trailproof project.
 
-# ADR-[number]: [Decision Title]
+User input: $ARGUMENTS
+
+## Step 1. Determine next ADR number
+
+Check existing files in .claude/decisions/ to find the highest ADR number. Increment by 1.
+If no ADRs exist, start at 1.
+
+## Step 2. Create the ADR
+
+Create .claude/decisions/ADR-<next_number>-$ARGUMENTS.md with:
+
+```markdown
+# ADR-<number>: <Decision Title>
 
 ## Status
 Proposed
@@ -12,13 +28,11 @@ What situation forced this decision.
 
 ## Options Considered
 
-### Option A: [name]
+### Option A: <name>
 Description. Pros. Cons.
 
-### Option B: [name]
+### Option B: <name>
 Description. Pros. Cons.
-
-(minimum 2 options)
 
 ## Decision
 What we chose and why.
@@ -30,11 +44,10 @@ What we chose and why.
 
 ### Bad
 - Honest downsides
-
----
+```
 
 Rules:
-- Do NOT implement anything
 - Minimum 2 options considered
-- Be honest about consequences — include real downsides, not just benefits
+- Be honest about consequences — include real downsides
 - Explain WHY, not just WHAT
+- Do NOT implement anything

@@ -1,4 +1,21 @@
 {
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$TOOL_INPUT\" | grep -q '\\.py'; then cd python && uv run ruff check --fix \"$TOOL_INPUT\" 2>/dev/null; uv run ruff format \"$TOOL_INPUT\" 2>/dev/null; fi; exit 0"
+          },
+          {
+            "type": "command",
+            "command": "if echo \"$TOOL_INPUT\" | grep -q '\\.ts'; then cd typescript && npx eslint --fix \"$TOOL_INPUT\" 2>/dev/null; fi; exit 0"
+          }
+        ]
+      }
+    ]
+  },
   "permissions": {
     "allow": [
       "Bash(make *)",

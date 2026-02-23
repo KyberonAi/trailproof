@@ -40,6 +40,7 @@ npm run all         lint + typecheck + test
 ## Conventions
 
 - No `any` — use `unknown` or proper types
+- JSDoc on all public classes and methods
 - Interfaces for data types (TrailEvent, QueryResult, VerifyResult)
 - Interface for store contract in stores/base.ts
 - Export types and classes from index.ts

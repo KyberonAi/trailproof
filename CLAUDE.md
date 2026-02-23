@@ -52,6 +52,19 @@ trailproof/
 6. Same error types: TrailproofError, ValidationError, StoreError, ChainError, SignatureError
 7. Same store interface: append, read_all, query, last_hash, count
 
+### Error Messages
+
+Both SDKs use the same format:
+```
+Trailproof: {what went wrong} — {context}
+```
+Example: `Trailproof: missing required field — actor_id is required`
+
+### Test Naming
+
+- Python: `test_{method}_{scenario}_{expected}` (e.g., `test_emit_missing_actor_raises_validation_error`)
+- TypeScript: `describe` / `it` blocks (e.g., `describe("emit") > it("throws ValidationError when actor_id missing")`)
+
 ### Build Order
 
 Python first, TypeScript mirrors after. Each step: Python -> TypeScript -> shared test vectors -> commit.
