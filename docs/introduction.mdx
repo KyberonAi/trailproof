@@ -12,9 +12,9 @@ icon: "shield-check"
 **Trailproof** = *Trail* + *Proof*. Every event is cryptographically chained — tamper one, and the entire chain proves it.
 </Note>
 
-## The Problem: Unprovable Audit Logs
+## Why Trailproof?
 
-Every system writes logs. But logs can be silently modified or deleted after the fact. There's no built-in way to prove an event log hasn't been tampered with.
+AI agents make autonomous decisions -- approving requests, writing to memory, calling external APIs. Regulators (EU AI Act Article 19) and customers increasingly demand proof that these actions were logged faithfully and that nothing was altered after the fact. Traditional logging can't provide that guarantee.
 
 | Capability | Basic Logging | **Trailproof** |
 |---|---|---|
@@ -36,23 +36,24 @@ Every event flows through a validation, hashing, optional signing, and append-on
 ## Core Pillars
 
 <CardGroup cols={2}>
-  <Card title="Tamper-Evident Chain" icon="link" color="#1E40AF">
+  <Card title="Tamper-Evident Chain" icon="link" color="#0EA5E9">
     SHA-256 hash chain links every event to the previous one. Modify event 5 in a chain of 100 — events 5 through 100 all fail verification. You can't silently tamper with history.
   </Card>
-  <Card title="Dual SDK Parity" icon="code" color="#1E3A8A">
+  <Card title="Dual SDK Parity" icon="code" color="#0284C7">
     Native libraries for Python and TypeScript with identical behavior. Same canonical JSON algorithm, same genesis hash, same test vectors. Emit in Python, verify in TypeScript.
   </Card>
-  <Card title="Zero Dependencies" icon="feather" color="#3B82F6">
+  <Card title="Zero Dependencies" icon="feather" color="#38BDF8">
     Stdlib-only in Python (`hashlib`, `json`, `uuid`), Node.js built-ins only in TypeScript (`crypto`, `fs`). No supply chain risk from your audit trail.
   </Card>
-  <Card title="HMAC Signing" icon="key" color="#1E40AF">
+  <Card title="HMAC Signing" icon="key" color="#0EA5E9">
     Optional HMAC-SHA256 signatures prove event provenance — that events were created by the holder of a specific secret key. Uses timing-safe comparison to prevent timing attacks.
   </Card>
 </CardGroup>
 
 ## Quick Example
 
-```python
+<CodeGroup>
+```python Python
 from trailproof import Trailproof
 
 tp = Trailproof()
@@ -70,7 +71,7 @@ result = tp.verify()
 print(result.intact)  # True
 ```
 
-```typescript
+```typescript TypeScript
 import { Trailproof } from "@kyberonai/trailproof";
 
 const tp = new Trailproof();
@@ -85,6 +86,7 @@ const event = tp.emit({
 const result = tp.verify();
 console.log(result.intact); // true
 ```
+</CodeGroup>
 
 ## The 10-Field Event Envelope
 
@@ -105,16 +107,16 @@ console.log(result.intact); // true
 ## Next Steps
 
 <CardGroup cols={2}>
-  <Card title="Quickstart" icon="rocket" color="#1E40AF" href="/quickstart">
+  <Card title="Quickstart" icon="rocket" color="#0EA5E9" href="/quickstart">
     Install and emit your first event in 5 minutes.
   </Card>
-  <Card title="Event Envelope" icon="scroll" color="#1E3A8A" href="/concepts/event-envelope">
+  <Card title="Event Envelope" icon="scroll" color="#0284C7" href="/concepts/event-envelope">
     Deep dive into the 10-field event structure.
   </Card>
-  <Card title="Hash Chain" icon="link" color="#3B82F6" href="/concepts/hash-chain">
+  <Card title="Hash Chain" icon="link" color="#38BDF8" href="/concepts/hash-chain">
     How events are cryptographically linked.
   </Card>
-  <Card title="API Reference" icon="code" color="#1E40AF" href="/api-reference/overview">
+  <Card title="API Reference" icon="code" color="#0EA5E9" href="/api-reference/overview">
     Full API documentation for both SDKs.
   </Card>
 </CardGroup>

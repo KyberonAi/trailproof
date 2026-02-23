@@ -21,7 +21,8 @@ The verifier starts at the genesis hash and walks forward through every event:
 
 ## Basic Usage
 
-```python
+<CodeGroup>
+```python Python
 from trailproof import Trailproof
 
 tp = Trailproof()
@@ -38,7 +39,7 @@ print(result.total)    # 3
 print(result.broken)   # []
 ```
 
-```typescript
+```typescript TypeScript
 import { Trailproof } from "@kyberonai/trailproof";
 
 const tp = new Trailproof();
@@ -52,6 +53,7 @@ console.log(result.intact);  // true
 console.log(result.total);   // 3
 console.log(result.broken);  // []
 ```
+</CodeGroup>
 
 ## Cascading Breaks
 
@@ -70,7 +72,7 @@ The `broken` array may contain many indices even if only one event was actually 
 
 Verifying an empty chain returns a clean result:
 
-```python
+```python Python
 tp = Trailproof()
 result = tp.verify()
 print(result.intact)  # True
@@ -86,7 +88,7 @@ Verification does not throw exceptions on broken chains — it returns the resul
 
 Verification works the same regardless of store type. The JSONL store reads all events from disk and verifies the chain:
 
-```python
+```python Python
 tp = Trailproof(store="jsonl", path="events.jsonl")
 
 # Verify events loaded from disk
@@ -104,10 +106,10 @@ Run `tp.verify()` on application startup to confirm your event file hasn't been 
 ## Next Steps
 
 <CardGroup cols={2}>
-  <Card title="Hash Chain" icon="link" color="#1E40AF" href="/concepts/hash-chain">
+  <Card title="Hash Chain" icon="link" color="#0EA5E9" href="/concepts/hash-chain">
     Understand the cryptographic linking mechanism.
   </Card>
-  <Card title="HMAC Signing" icon="key" color="#1E3A8A" href="/guides/hmac-signing">
+  <Card title="HMAC Signing" icon="key" color="#0284C7" href="/guides/hmac-signing">
     Add provenance on top of chain integrity.
   </Card>
 </CardGroup>

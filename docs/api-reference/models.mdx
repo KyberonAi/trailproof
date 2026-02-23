@@ -12,7 +12,8 @@ Trailproof uses three core data structures.
 
 The event envelope -- every recorded event has this shape.
 
-```python
+<CodeGroup>
+```python Python
 @dataclass
 class TrailEvent:
     event_id: str         # UUID v4
@@ -28,7 +29,7 @@ class TrailEvent:
     signature: str | None # HMAC-SHA256 signature
 ```
 
-```typescript
+```typescript TypeScript
 interface TrailEvent {
   eventId: string;         // UUID v4
   eventType: string;       // namespaced event type
@@ -43,24 +44,27 @@ interface TrailEvent {
   signature?: string;      // HMAC-SHA256 signature
 }
 ```
+</CodeGroup>
 
 ## QueryResult
 
 Returned by `query()`. Contains matching events and an optional cursor for pagination.
 
-```python
+<CodeGroup>
+```python Python
 @dataclass
 class QueryResult:
     events: list[TrailEvent]    # matching events
     next_cursor: str | None     # cursor for next page, None if no more
 ```
 
-```typescript
+```typescript TypeScript
 interface QueryResult {
   events: TrailEvent[];         // matching events
   nextCursor?: string;          // cursor for next page
 }
 ```
+</CodeGroup>
 
 When `next_cursor` / `nextCursor` is present, pass it back to `query()` to get the next page of results.
 
@@ -68,7 +72,8 @@ When `next_cursor` / `nextCursor` is present, pass it back to `query()` to get t
 
 Returned by `verify()`. Reports the integrity status of the hash chain.
 
-```python
+<CodeGroup>
+```python Python
 @dataclass
 class VerifyResult:
     intact: bool          # True if no tampering detected
@@ -76,13 +81,14 @@ class VerifyResult:
     broken: list[int]     # indices of events that failed verification
 ```
 
-```typescript
+```typescript TypeScript
 interface VerifyResult {
   intact: boolean;        // true if no tampering detected
   total: number;          // number of events checked
   broken: number[];       // indices of events that failed verification
 }
 ```
+</CodeGroup>
 
 - `intact` is `True`/`true` when `broken` is empty
 - `broken` contains 0-based indices of events whose hash doesn't match the recomputed value

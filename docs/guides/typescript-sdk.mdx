@@ -18,7 +18,7 @@ Requires Node.js 18+. Zero runtime dependencies — uses only Node.js built-in m
 
 ## Import
 
-```typescript
+```typescript TypeScript
 import {
   Trailproof,
   TrailEvent,
@@ -54,7 +54,7 @@ TypeScript uses `camelCase` where Python uses `snake_case`:
 
 ## Full Example
 
-```typescript
+```typescript TypeScript
 import { Trailproof } from "@kyberonai/trailproof";
 
 // Create with JSONL store and HMAC signing
@@ -94,7 +94,7 @@ tp.flush();
 
 TypeScript uses options objects instead of keyword arguments:
 
-```typescript
+```typescript TypeScript
 // Constructor
 const tp = new Trailproof({ store: "jsonl", path: "events.jsonl" });
 
@@ -107,7 +107,7 @@ const result = tp.query({ eventType: "...", limit: 50 });
 
 ## Error Handling
 
-```typescript
+```typescript TypeScript
 import { Trailproof, ValidationError, TrailproofError } from "@kyberonai/trailproof";
 
 const tp = new Trailproof();
@@ -132,10 +132,10 @@ You can emit events in a Python service and verify them in a TypeScript service 
 ## Next Steps
 
 <CardGroup cols={2}>
-  <Card title="API Reference" icon="code" color="#1E40AF" href="/api-reference/overview">
+  <Card title="API Reference" icon="code" color="#0EA5E9" href="/api-reference/overview">
     Full API documentation for both SDKs.
   </Card>
-  <Card title="Configuration" icon="gear" color="#1E3A8A" href="/api-reference/config">
+  <Card title="Configuration" icon="gear" color="#0284C7" href="/api-reference/config">
     All constructor options.
   </Card>
 </CardGroup>

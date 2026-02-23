@@ -118,11 +118,11 @@ html.dark #pagination a {
 }
 
 #pagination a:hover {
-  border-color: #1E40AF !important;
+  border-color: #0EA5E9 !important;
 }
 
 html.dark #pagination a:hover {
-  border-color: #3B82F6 !important;
+  border-color: #38BDF8 !important;
 }
 
 /* Footer — same nuclear approach */
@@ -172,7 +172,7 @@ html.dark [class*="footer"] {
   font-weight: 600 !important;
   letter-spacing: 0.04em !important;
   text-transform: uppercase !important;
-  color: #1E40AF !important;
+  color: #0EA5E9 !important;
   opacity: 0.85 !important;
 }
 
@@ -197,8 +197,8 @@ h3 {
 }
 
 .card:hover {
-  border-color: #1E40AF !important;
-  box-shadow: 0 2px 8px rgba(30, 64, 175, 0.08) !important;
+  border-color: #0EA5E9 !important;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.08) !important;
 }
 
 html.dark .card {
@@ -206,8 +206,8 @@ html.dark .card {
 }
 
 html.dark .card:hover {
-  border-color: #3B82F6 !important;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1) !important;
+  border-color: #38BDF8 !important;
+  box-shadow: 0 2px 8px rgba(56, 189, 248, 0.1) !important;
 }
 
 /* ──────────────────────────────────────────────

@@ -22,17 +22,19 @@ HMAC signing is optional. The hash chain alone provides tamper detection. HMAC a
 
 Pass a `signing_key` when creating the Trailproof instance:
 
-```python
+<CodeGroup>
+```python Python
 from trailproof import Trailproof
 
 tp = Trailproof(signing_key="your-secret-key")
 ```
 
-```typescript
+```typescript TypeScript
 import { Trailproof } from "@kyberonai/trailproof";
 
 const tp = new Trailproof({ signingKey: "your-secret-key" });
 ```
+</CodeGroup>
 
 Every event emitted through this instance will have a `signature` field.
 
@@ -48,7 +50,8 @@ The hex digest is computed as `HMAC-SHA256(signing_key, canonical_json(event))`.
 
 ## Example
 
-```python
+<CodeGroup>
+```python Python
 tp = Trailproof(signing_key="my-secret")
 
 event = tp.emit(
@@ -62,7 +65,7 @@ print(event.signature)
 # hmac-sha256:a1b2c3d4e5f6...
 ```
 
-```typescript
+```typescript TypeScript
 const tp = new Trailproof({ signingKey: "my-secret" });
 
 const event = tp.emit({
@@ -75,6 +78,7 @@ const event = tp.emit({
 console.log(event.signature);
 // hmac-sha256:a1b2c3d4e5f6...
 ```
+</CodeGroup>
 
 ## Verification
 
@@ -101,25 +105,27 @@ Trailproof does not manage keys -- you provide the key, and Trailproof signs eve
 Store your HMAC signing key in environment variables or a secrets manager. Never hardcode it in source code.
 </Tip>
 
-```python
+<CodeGroup>
+```python Python
 import os
 
 tp = Trailproof(signing_key=os.environ["TRAILPROOF_SIGNING_KEY"])
 ```
 
-```typescript
+```typescript TypeScript
 const tp = new Trailproof({
   signingKey: process.env.TRAILPROOF_SIGNING_KEY!,
 });
 ```
+</CodeGroup>
 
 ## Next Steps
 
 <CardGroup cols={2}>
-  <Card title="Hash Chain" icon="link" color="#1E40AF" href="/concepts/hash-chain">
+  <Card title="Hash Chain" icon="link" color="#0EA5E9" href="/concepts/hash-chain">
     How the hash chain provides tamper detection.
   </Card>
-  <Card title="Verification" icon="shield-check" color="#1E3A8A" href="/guides/verification">
+  <Card title="Verification" icon="shield-check" color="#0284C7" href="/guides/verification">
     Verify both chain integrity and signatures.
   </Card>
 </CardGroup>

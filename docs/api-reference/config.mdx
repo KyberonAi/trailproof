@@ -21,13 +21,15 @@ The `Trailproof` constructor accepts options to configure the store, signing, an
 
 The simplest configuration. Events are stored in memory and lost on process exit.
 
-```python
+<CodeGroup>
+```python Python
 tp = Trailproof()
 ```
 
-```typescript
+```typescript TypeScript
 const tp = new Trailproof();
 ```
+</CodeGroup>
 
 Good for testing, short-lived processes, and quick prototyping.
 
@@ -35,13 +37,15 @@ Good for testing, short-lived processes, and quick prototyping.
 
 Events are appended to a JSONL file -- one JSON object per line. The file survives process restarts.
 
-```python
+<CodeGroup>
+```python Python
 tp = Trailproof(store="jsonl", path="events.jsonl")
 ```
 
-```typescript
+```typescript TypeScript
 const tp = new Trailproof({ store: "jsonl", path: "events.jsonl" });
 ```
+</CodeGroup>
 
 - File is created with `0o600` permissions (owner read/write only)
 - On initialization, reads the existing file to recover `last_hash` and event count
@@ -56,13 +60,15 @@ Use an absolute path or a path relative to your project root. The directory must
 
 Add HMAC-SHA256 signatures to prove event provenance.
 
-```python
+<CodeGroup>
+```python Python
 tp = Trailproof(signing_key="your-secret-key")
 ```
 
-```typescript
+```typescript TypeScript
 const tp = new Trailproof({ signingKey: "your-secret-key" });
 ```
+</CodeGroup>
 
 When a signing key is configured, every emitted event gets a `signature` field in the format `hmac-sha256:<hex>`. The hash chain works independently of signing -- they're separate integrity layers.
 
@@ -70,7 +76,8 @@ When a signing key is configured, every emitted event gets a `signature` field i
 
 Set a default tenant that's applied to every event if `tenant_id` is not provided in the `emit()` call.
 
-```python
+<CodeGroup>
+```python Python
 tp = Trailproof(default_tenant_id="acme-corp")
 
 # tenant_id defaults to "acme-corp"
@@ -82,7 +89,7 @@ event = tp.emit(
 print(event.tenant_id)  # "acme-corp"
 ```
 
-```typescript
+```typescript TypeScript
 const tp = new Trailproof({ defaultTenantId: "acme-corp" });
 
 const event = tp.emit({
@@ -92,12 +99,14 @@ const event = tp.emit({
 });
 console.log(event.tenantId); // "acme-corp"
 ```
+</CodeGroup>
 
 ## Combined Configuration
 
 All options can be used together:
 
-```python
+<CodeGroup>
+```python Python
 tp = Trailproof(
     store="jsonl",
     path=".trailproof/events.jsonl",
@@ -106,7 +115,7 @@ tp = Trailproof(
 )
 ```
 
-```typescript
+```typescript TypeScript
 const tp = new Trailproof({
   store: "jsonl",
   path: ".trailproof/events.jsonl",
@@ -114,3 +123,4 @@ const tp = new Trailproof({
   defaultTenantId: "acme-corp",
 });
 ```
+</CodeGroup>

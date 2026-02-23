@@ -10,7 +10,8 @@ The `Trailproof` class is the main entry point. It manages the hash chain, store
 
 ## Constructor
 
-```python
+<CodeGroup>
+```python Python
 tp = Trailproof(
     store="memory",              # "memory" (default) or "jsonl"
     path=None,                   # file path (required for jsonl store)
@@ -19,7 +20,7 @@ tp = Trailproof(
 )
 ```
 
-```typescript
+```typescript TypeScript
 const tp = new Trailproof({
   store: "memory",              // "memory" (default) or "jsonl"
   path: undefined,              // file path (required for jsonl store)
@@ -27,12 +28,14 @@ const tp = new Trailproof({
   defaultTenantId: undefined,   // applied to every event if not specified
 });
 ```
+</CodeGroup>
 
 ## emit()
 
 Record a new event in the audit trail.
 
-```python
+<CodeGroup>
+```python Python
 event = tp.emit(
     event_type="myapp.user.login",     # required
     actor_id="user-42",                 # required
@@ -43,7 +46,7 @@ event = tp.emit(
 )
 ```
 
-```typescript
+```typescript TypeScript
 const event = tp.emit({
   eventType: "myapp.user.login",       // required
   actorId: "user-42",                  // required
@@ -53,6 +56,7 @@ const event = tp.emit({
   sessionId: "session-xyz",           // optional
 });
 ```
+</CodeGroup>
 
 **Returns:** `TrailEvent` -- the complete event with auto-generated fields.
 
@@ -69,7 +73,8 @@ const event = tp.emit({
 
 Search events with filters and pagination.
 
-```python
+<CodeGroup>
+```python Python
 result = tp.query(
     event_type="myapp.user.login",       # optional
     actor_id="user-42",                   # optional
@@ -86,7 +91,7 @@ result.events       # list[TrailEvent]
 result.next_cursor  # str | None
 ```
 
-```typescript
+```typescript TypeScript
 const result = tp.query({
   eventType: "myapp.user.login",
   actorId: "user-42",
@@ -102,6 +107,7 @@ const result = tp.query({
 result.events;      // TrailEvent[]
 result.nextCursor;  // string | undefined
 ```
+</CodeGroup>
 
 **Returns:** `QueryResult { events, next_cursor }`.
 
@@ -111,7 +117,8 @@ All filters are optional. No filters returns all events up to `limit`. Filters u
 
 Walk the hash chain and check every event's hash.
 
-```python
+<CodeGroup>
+```python Python
 result = tp.verify()
 
 result.intact   # bool -- True if no tampering
@@ -119,13 +126,14 @@ result.total    # int -- number of events checked
 result.broken   # list[int] -- indices of broken events
 ```
 
-```typescript
+```typescript TypeScript
 const result = tp.verify();
 
 result.intact;  // boolean -- true if no tampering
 result.total;   // number -- number of events checked
 result.broken;  // number[] -- indices of broken events
 ```
+</CodeGroup>
 
 **Returns:** `VerifyResult { intact, total, broken }`.
 
@@ -139,15 +147,17 @@ Verification does not throw on broken chains -- it returns the result. Check `re
 
 Get all events for a specific trace ID, ordered by timestamp.
 
-```python
+<CodeGroup>
+```python Python
 events = tp.get_trace("trace-abc")
 # returns: list[TrailEvent]
 ```
 
-```typescript
+```typescript TypeScript
 const events = tp.getTrace("trace-abc");
 // returns: TrailEvent[]
 ```
+</CodeGroup>
 
 **Returns:** List of `TrailEvent` objects matching the trace ID, ordered by timestamp.
 
@@ -155,12 +165,14 @@ const events = tp.getTrace("trace-abc");
 
 Ensure all buffered events are persisted to disk.
 
-```python
+<CodeGroup>
+```python Python
 tp.flush()
 ```
 
-```typescript
+```typescript TypeScript
 tp.flush();
 ```
+</CodeGroup>
 
 No-op for the memory store. For the JSONL store, ensures all buffered writes are flushed to disk.

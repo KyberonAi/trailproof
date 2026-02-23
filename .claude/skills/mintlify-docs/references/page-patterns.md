@@ -61,17 +61,23 @@ Structure (matches Attesta's introduction.mdx):
 
 ## Code Block Convention
 
-Show Python and TypeScript side by side as sequential code blocks (NOT CodeGroup):
+Wrap Python and TypeScript pairs in `<CodeGroup>` for tabbed views. Add language labels after backticks:
 
-```python
+```mdx
+<CodeGroup>
+```python Python
 from trailproof import Trailproof
 tp = Trailproof()
 ```
 
-```typescript
+```typescript TypeScript
 import { Trailproof } from "@kyberonai/trailproof";
 const tp = new Trailproof();
 ```
+</CodeGroup>
+```
+
+Standalone blocks (bash, json, single-language) do NOT get wrapped in CodeGroup.
 
 ## Callouts
 
@@ -87,7 +93,7 @@ Feature highlight cards with `color` prop matching project palette:
 
 ```mdx
 <CardGroup cols={2}>
-  <Card title="Feature" icon="icon-name" color="#1E40AF">
+  <Card title="Feature" icon="icon-name" color="#0EA5E9">
     Description of the feature.
   </Card>
 </CardGroup>
@@ -97,7 +103,7 @@ Navigation cards with `href`:
 
 ```mdx
 <CardGroup cols={2}>
-  <Card title="Page" icon="icon-name" color="#1E40AF" href="/page">
+  <Card title="Page" icon="icon-name" color="#0EA5E9" href="/page">
     Description.
   </Card>
 </CardGroup>

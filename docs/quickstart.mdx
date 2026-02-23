@@ -28,23 +28,26 @@ npm install @kyberonai/trailproof
 
 By default, Trailproof uses an in-memory store -- perfect for getting started.
 
-```python
+<CodeGroup>
+```python Python
 from trailproof import Trailproof
 
 tp = Trailproof()
 ```
 
-```typescript
+```typescript TypeScript
 import { Trailproof } from "@kyberonai/trailproof";
 
 const tp = new Trailproof();
 ```
+</CodeGroup>
 
 ## 2. Emit Events
 
 Every event needs an `event_type`, `actor_id`, `tenant_id`, and `payload`. Trailproof auto-generates `event_id`, `timestamp`, and the hash chain fields.
 
-```python
+<CodeGroup>
+```python Python
 event = tp.emit(
     event_type="myapp.user.login",
     actor_id="user-42",
@@ -57,7 +60,7 @@ print(event.hash)        # SHA-256 hash
 print(event.prev_hash)   # "0" * 64 (genesis)
 ```
 
-```typescript
+```typescript TypeScript
 const event = tp.emit({
   eventType: "myapp.user.login",
   actorId: "user-42",
@@ -69,6 +72,7 @@ console.log(event.eventId);   // UUID v4
 console.log(event.hash);      // SHA-256 hash
 console.log(event.prevHash);  // "0".repeat(64) (genesis)
 ```
+</CodeGroup>
 
 <Note>
 The first event in the chain uses a genesis hash of 64 zeros as its `prev_hash`. Every subsequent event links to the hash of the previous event.
@@ -78,7 +82,8 @@ The first event in the chain uses a genesis hash of 64 zeros as its `prev_hash`.
 
 Filter events by type, actor, tenant, time range, or any combination. Results are paginated with cursor-based navigation.
 
-```python
+<CodeGroup>
+```python Python
 result = tp.query(actor_id="user-42", limit=50)
 
 for event in result.events:
@@ -89,7 +94,7 @@ if result.next_cursor:
     next_page = tp.query(actor_id="user-42", cursor=result.next_cursor)
 ```
 
-```typescript
+```typescript TypeScript
 const result = tp.query({ actorId: "user-42", limit: 50 });
 
 for (const event of result.events) {
@@ -101,12 +106,14 @@ if (result.nextCursor) {
   const nextPage = tp.query({ actorId: "user-42", cursor: result.nextCursor });
 }
 ```
+</CodeGroup>
 
 ## 4. Verify Chain Integrity
 
 Walk the entire hash chain to confirm no events have been tampered with.
 
-```python
+<CodeGroup>
+```python Python
 verification = tp.verify()
 
 print(verification.intact)  # True
@@ -114,13 +121,14 @@ print(verification.total)   # number of events
 print(verification.broken)  # [] (empty = no tampering)
 ```
 
-```typescript
+```typescript TypeScript
 const verification = tp.verify();
 
 console.log(verification.intact);  // true
 console.log(verification.total);   // number of events
 console.log(verification.broken);  // [] (empty = no tampering)
 ```
+</CodeGroup>
 
 <Warning>
 If a tampered event is detected, `broken` contains the indices of all affected events. Because each event depends on the previous hash, tampering event N causes events N through the end to appear broken.
@@ -130,7 +138,8 @@ If a tampered event is detected, `broken` contains the indices of all affected e
 
 Switch to the JSONL file store for events that survive restarts.
 
-```python
+<CodeGroup>
+```python Python
 tp = Trailproof(store="jsonl", path="events.jsonl")
 
 # Events are appended to the file as JSON lines
@@ -145,7 +154,7 @@ event = tp.emit(
 tp.flush()
 ```
 
-```typescript
+```typescript TypeScript
 const tp = new Trailproof({ store: "jsonl", path: "events.jsonl" });
 
 const event = tp.emit({
@@ -157,6 +166,7 @@ const event = tp.emit({
 
 tp.flush();
 ```
+</CodeGroup>
 
 <Tip>
 The JSONL file is human-readable. Inspect it with `cat events.jsonl | jq .` or `grep "user-42" events.jsonl`.
@@ -165,16 +175,16 @@ The JSONL file is human-readable. Inspect it with `cat events.jsonl | jq .` or `
 ## Next Steps
 
 <CardGroup cols={2}>
-  <Card title="Event Envelope" icon="scroll" color="#1E40AF" href="/concepts/event-envelope">
+  <Card title="Event Envelope" icon="scroll" color="#0EA5E9" href="/concepts/event-envelope">
     Learn about the 10-field event structure.
   </Card>
-  <Card title="HMAC Signing" icon="key" color="#1E3A8A" href="/guides/hmac-signing">
+  <Card title="HMAC Signing" icon="key" color="#0284C7" href="/guides/hmac-signing">
     Add cryptographic provenance to your events.
   </Card>
-  <Card title="JSONL Store" icon="file-code" color="#3B82F6" href="/guides/jsonl-store">
+  <Card title="JSONL Store" icon="file-code" color="#38BDF8" href="/guides/jsonl-store">
     Configure persistent file-based storage.
   </Card>
-  <Card title="Verification" icon="shield-check" color="#1E40AF" href="/guides/verification">
+  <Card title="Verification" icon="shield-check" color="#0EA5E9" href="/guides/verification">
     Deep dive into chain integrity verification.
   </Card>
 </CardGroup>

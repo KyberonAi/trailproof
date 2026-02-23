@@ -48,7 +48,8 @@ This makes tampering obvious and detectable. You can't silently modify one event
 
 Trailproof walks the entire chain and recomputes every hash:
 
-```python
+<CodeGroup>
+```python Python
 verification = tp.verify()
 
 # VerifyResult:
@@ -57,7 +58,7 @@ verification = tp.verify()
 #   broken: list    -- indices of events that failed verification
 ```
 
-```typescript
+```typescript TypeScript
 const verification = tp.verify();
 
 // VerifyResult:
@@ -65,6 +66,7 @@ const verification = tp.verify();
 //   total:  number    -- number of events checked
 //   broken: number[]  -- indices of events that failed verification
 ```
+</CodeGroup>
 
 An empty chain returns `{ intact: true, total: 0, broken: [] }`.
 
@@ -83,10 +85,10 @@ If you emit the same event data in Python and TypeScript, you get the same hash.
 ## Next Steps
 
 <CardGroup cols={2}>
-  <Card title="Canonical JSON" icon="code" color="#1E40AF" href="/concepts/canonical-json">
+  <Card title="Canonical JSON" icon="code" color="#0EA5E9" href="/concepts/canonical-json">
     How events are serialized for deterministic hashing.
   </Card>
-  <Card title="Verification Guide" icon="shield-check" color="#1E3A8A" href="/guides/verification">
+  <Card title="Verification Guide" icon="shield-check" color="#0284C7" href="/guides/verification">
     Practical guide to verifying chain integrity.
   </Card>
 </CardGroup>

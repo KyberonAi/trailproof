@@ -35,7 +35,8 @@ Examples:
 
 Thrown by `emit()` when required fields are missing or empty.
 
-```python
+<CodeGroup>
+```python Python
 from trailproof import Trailproof, ValidationError
 
 tp = Trailproof()
@@ -51,7 +52,7 @@ except ValidationError as e:
     print(e)  # Trailproof: missing required field -- event_type is required
 ```
 
-```typescript
+```typescript TypeScript
 import { Trailproof, ValidationError } from "@kyberonai/trailproof";
 
 const tp = new Trailproof();
@@ -69,6 +70,7 @@ try {
   }
 }
 ```
+</CodeGroup>
 
 Required fields that trigger `ValidationError` when missing or empty:
 - `event_type` / `eventType`
@@ -80,7 +82,7 @@ Required fields that trigger `ValidationError` when missing or empty:
 
 Thrown when the storage backend fails -- for example, when the JSONL file can't be written.
 
-```python
+```python Python
 from trailproof import StoreError
 
 # StoreError is raised on disk full, permission denied, etc.
@@ -94,7 +96,7 @@ Represents a broken hash chain. Note that `verify()` does **not** throw this err
 
 Thrown when HMAC verification fails -- for example, when an event has a `signature` field but no signing key is configured.
 
-```python
+```python Python
 from trailproof import SignatureError
 
 # SignatureError is raised on HMAC verification failures
@@ -104,7 +106,8 @@ from trailproof import SignatureError
 
 Use the base class to catch any Trailproof error:
 
-```python
+<CodeGroup>
+```python Python
 from trailproof import TrailproofError
 
 try:
@@ -113,7 +116,7 @@ except TrailproofError as e:
     print(f"Trailproof error: {e}")
 ```
 
-```typescript
+```typescript TypeScript
 import { TrailproofError } from "@kyberonai/trailproof";
 
 try {
@@ -124,3 +127,4 @@ try {
   }
 }
 ```
+</CodeGroup>

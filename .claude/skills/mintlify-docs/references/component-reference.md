@@ -14,7 +14,7 @@
 
 ```mdx
 <CardGroup cols={2}>
-  <Card title="Title" icon="icon-name" color="#1E40AF" href="/page">
+  <Card title="Title" icon="icon-name" color="#0EA5E9" href="/page">
     Card description text.
   </Card>
 </CardGroup>
@@ -66,6 +66,24 @@
   <img src="/images/diagram.svg" alt="Descriptive alt text" />
 </Frame>
 ```
+
+## CodeGroup
+
+Wrap consecutive code blocks in different languages into a tabbed view. Language labels appear as tab titles.
+
+```mdx
+<CodeGroup>
+```python Python
+# Python code
+```
+
+```typescript TypeScript
+// TypeScript code
+```
+</CodeGroup>
+```
+
+The text after the language identifier (e.g., `Python` in ` ```python Python `) becomes the tab label. Without it, the tab shows the language name in lowercase.
 
 ## Code Blocks
 

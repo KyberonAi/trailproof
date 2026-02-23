@@ -64,7 +64,8 @@ Trailproof doesn't enforce this convention -- event types are just strings. The 
 
 ## Example
 
-```python
+<CodeGroup>
+```python Python
 from trailproof import Trailproof
 
 tp = Trailproof()
@@ -91,7 +92,7 @@ print(event.prev_hash)    # "0000...0000" (genesis)
 print(event.hash)         # "a1b2c3..."
 ```
 
-```typescript
+```typescript TypeScript
 import { Trailproof } from "@kyberonai/trailproof";
 
 const tp = new Trailproof();
@@ -112,12 +113,13 @@ console.log(event.actorId);    // "user-42"
 console.log(event.tenantId);   // "acme-corp"
 console.log(event.hash);       // "a1b2c3..."
 ```
+</CodeGroup>
 
 ## Validation
 
 Trailproof validates required fields on `emit()`. Missing or empty required fields throw a `ValidationError`:
 
-```python
+```python Python
 # These all throw ValidationError:
 tp.emit(event_type="", actor_id="user-42", tenant_id="acme", payload={})
 tp.emit(event_type="app.action", actor_id="", tenant_id="acme", payload={})
@@ -131,10 +133,10 @@ All four required caller fields -- `event_type`, `actor_id`, `tenant_id`, and `p
 ## Next Steps
 
 <CardGroup cols={2}>
-  <Card title="Hash Chain" icon="link" color="#1E40AF" href="/concepts/hash-chain">
+  <Card title="Hash Chain" icon="link" color="#0EA5E9" href="/concepts/hash-chain">
     How events are cryptographically linked.
   </Card>
-  <Card title="API Reference" icon="code" color="#1E3A8A" href="/api-reference/overview">
+  <Card title="API Reference" icon="code" color="#0284C7" href="/api-reference/overview">
     Full API documentation for both SDKs.
   </Card>
 </CardGroup>

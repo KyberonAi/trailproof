@@ -26,6 +26,22 @@ Check the project's SPEC.md, README.md, and source code for accurate API signatu
 
 Follow the Kyberon page patterns documented in `references/page-patterns.md`. Every MDX file requires `title` frontmatter minimum. Show dual SDK examples (Python + TypeScript) for all code.
 
+**Code Block Convention:**
+
+Use `<CodeGroup>` to wrap Python + TypeScript code blocks into tabbed views:
+
+```mdx
+<CodeGroup>
+```python Python
+# Python code
+```
+
+```typescript TypeScript
+// TypeScript code
+```
+</CodeGroup>
+```
+
 ### Step 4: Update navigation
 
 Add new pages to `docs.json` navigation. Use root-relative internal links without file extensions (e.g., `/quickstart` not `./quickstart.mdx`).
@@ -58,7 +74,7 @@ See `references/component-reference.md` for Mintlify component usage.
 
 | Project | Primary | Light | Dark | Dark BG |
 |---------|---------|-------|------|---------|
-| **Trailproof** | `#1E40AF` | `#3B82F6` | `#1E3A8A` | `#1A1A1F` |
+| **Trailproof** | `#0EA5E9` | `#38BDF8` | `#0284C7` | `#1A1A1F` |
 | **Attesta** | `#16A34A` | `#22C55E` | `#15803D` | `#1A1D1C` |
 | **Memproof** | `#7C3AED` | `#A78BFA` | `#6D28D9` | `#1A1A1F` |
 
@@ -81,7 +97,6 @@ See `references/diagram-style.md` for SVG template and conventions.
 - Do NOT skip frontmatter — every page needs `title` minimum
 - Do NOT use relative links with `.mdx` extension
 - Do NOT omit `style.css` — the wider layout is part of the Kyberon brand
-- Do NOT use CodeGroup — use sequential code blocks with language labels instead
 - Do NOT add colors outside the project palette
 
 ## Troubleshooting

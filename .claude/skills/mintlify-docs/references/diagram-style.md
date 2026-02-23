@@ -71,7 +71,7 @@ Animated dashed lines between nodes:
 ```xml
 <filter id="glowBlue" x="-20%" y="-20%" width="140%" height="140%">
   <feGaussianBlur stdDeviation="6" result="b"/>
-  <feFlood flood-color="#1E40AF" flood-opacity="0.3" result="c"/>
+  <feFlood flood-color="#0EA5E9" flood-opacity="0.3" result="c"/>
   <feComposite in="c" in2="b" operator="in" result="s"/>
   <feMerge><feMergeNode in="s"/><feMergeNode in="SourceGraphic"/></feMerge>
 </filter>
@@ -89,7 +89,7 @@ Animated dashed lines between nodes:
 
 | Element | Color | Use |
 |---------|-------|-----|
-| Primary nodes | `#1E40AF` / `#3B82F6` | Main flow steps |
+| Primary nodes | `#0EA5E9` / `#38BDF8` | Main flow steps |
 | Secondary nodes | `#6366f1` / `#8b5cf6` | Supporting elements |
 | Success | `#22c55e` / `#4ade80` | Verification passed |
 | Warning | `#f59e0b` / `#fbbf24` | Caution states |

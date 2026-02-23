@@ -36,7 +36,8 @@ The only differences between SDKs are language conventions: `snake_case` vs `cam
 
 ## Quick Reference
 
-```python
+<CodeGroup>
+```python Python
 from trailproof import Trailproof, TrailEvent, QueryResult, VerifyResult
 
 tp = Trailproof()
@@ -54,7 +55,7 @@ events: list[TrailEvent] = tp.get_trace("trace-abc")
 tp.flush()
 ```
 
-```typescript
+```typescript TypeScript
 import { Trailproof, TrailEvent, QueryResult, VerifyResult } from "@kyberonai/trailproof";
 
 const tp = new Trailproof();
@@ -71,3 +72,4 @@ const verification: VerifyResult = tp.verify();
 const events: TrailEvent[] = tp.getTrace("trace-abc");
 tp.flush();
 ```
+</CodeGroup>

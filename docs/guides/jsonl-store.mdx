@@ -10,17 +10,19 @@ The JSONL store persists events as one JSON object per line in an append-only fi
 
 ## Setup
 
-```python
+<CodeGroup>
+```python Python
 from trailproof import Trailproof
 
 tp = Trailproof(store="jsonl", path="events.jsonl")
 ```
 
-```typescript
+```typescript TypeScript
 import { Trailproof } from "@kyberonai/trailproof";
 
 const tp = new Trailproof({ store: "jsonl", path: "events.jsonl" });
 ```
+</CodeGroup>
 
 ## File Format
 
@@ -78,13 +80,15 @@ Corrupt lines don't prevent the store from functioning, but they will cause `ver
 
 Call `flush()` to ensure all buffered writes are persisted:
 
-```python
+<CodeGroup>
+```python Python
 tp.flush()
 ```
 
-```typescript
+```typescript TypeScript
 tp.flush();
 ```
+</CodeGroup>
 
 <Tip>
 Call `flush()` before process exit or at critical checkpoints to ensure no events are lost.
@@ -104,10 +108,10 @@ Call `flush()` before process exit or at critical checkpoints to ensure no event
 ## Next Steps
 
 <CardGroup cols={2}>
-  <Card title="Configuration" icon="file-code" color="#1E40AF" href="/api-reference/config">
+  <Card title="Configuration" icon="file-code" color="#0EA5E9" href="/api-reference/config">
     All constructor options for Trailproof.
   </Card>
-  <Card title="Verification" icon="shield-check" color="#1E3A8A" href="/guides/verification">
+  <Card title="Verification" icon="shield-check" color="#0284C7" href="/guides/verification">
     Verify chain integrity including JSONL recovery.
   </Card>
 </CardGroup>
