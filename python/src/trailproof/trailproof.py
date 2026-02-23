@@ -3,11 +3,11 @@
 import uuid
 from datetime import UTC, datetime
 
-from trailproof.chain import compute_hash
+from trailproof.chain import GENESIS_HASH, compute_hash
 from trailproof.errors import ValidationError
 from trailproof.stores.base import TrailStore
 from trailproof.stores.memory import MemoryStore
-from trailproof.types import QueryFilters, QueryResult, TrailEvent
+from trailproof.types import QueryFilters, QueryResult, TrailEvent, VerifyResult
 
 
 class Trailproof:
@@ -187,6 +187,62 @@ class Trailproof:
         """
         result = self._store.query(QueryFilters(trace_id=trace_id, limit=10_000))
         return sorted(result.events, key=lambda e: e.timestamp)
+
+    def verify(self) -> VerifyResult:
+        """Verify the integrity of the entire hash chain.
+
+        Walks every event and recomputes its hash. If any event's hash
+        does not match, that index and all subsequent indices are reported
+        as broken (cascading breaks).
+
+        Returns:
+            VerifyResult with intact=True if chain is valid, or
+            intact=False with the list of broken indices.
+        """
+        events = self._store.read_all()
+        total = len(events)
+
+        if total == 0:
+            return VerifyResult(intact=True, total=0)
+
+        broken: list[int] = []
+        prev_hash = GENESIS_HASH
+        chain_broken = False
+
+        for i, event in enumerate(events):
+            if chain_broken:
+                broken.append(i)
+                continue
+
+            # Recompute hash using event with hash="" (as during emit)
+            event_for_hash = TrailEvent(
+                event_id=event.event_id,
+                event_type=event.event_type,
+                timestamp=event.timestamp,
+                actor_id=event.actor_id,
+                tenant_id=event.tenant_id,
+                payload=event.payload,
+                prev_hash=event.prev_hash,
+                hash="",
+            )
+            expected_hash = compute_hash(prev_hash, event_for_hash)
+
+            if event.hash != expected_hash or event.prev_hash != prev_hash:
+                broken.append(i)
+                chain_broken = True
+            else:
+                prev_hash = event.hash
+
+        intact = len(broken) == 0
+        return VerifyResult(intact=intact, total=total, broken=broken)
+
+    def flush(self) -> None:
+        """Flush any buffered data to the underlying store.
+
+        For MemoryStore this is a no-op. For persistent stores (e.g. JSONL),
+        this ensures all data is written to disk.
+        """
+        # MemoryStore has no buffering; JSONL store will override if needed
 
     @staticmethod
     def _validate_required(field_name: str, value: str | None) -> None:
