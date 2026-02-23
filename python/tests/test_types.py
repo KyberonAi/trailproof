@@ -2,7 +2,7 @@
 
 import pytest
 
-from trailproof._types import QueryFilters, QueryResult, TrailEvent, VerifyResult
+from trailproof.types import QueryFilters, QueryResult, TrailEvent, VerifyResult
 
 
 class TestTrailEvent:

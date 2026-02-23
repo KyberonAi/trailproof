@@ -41,7 +41,7 @@ make all         lint + typecheck + test
 
 - Type hints on all public functions and methods
 - Google-style docstrings on all public classes and methods
-- Internal modules prefixed with `_` (e.g., `_chain.py`) — public API only through `__init__.py`
+- Public API only through `__init__.py` — do not import from internal modules directly
 - dataclasses for data types (TrailEvent, QueryResult, VerifyResult)
 - ABC for store interface in stores/base.py
 - `__init__.py` re-exports the public API: Trailproof, TrailEvent, QueryResult, VerifyResult, error classes

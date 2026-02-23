@@ -1,6 +1,6 @@
 """Tests for the Trailproof error hierarchy."""
 
-from trailproof._errors import (
+from trailproof.errors import (
     ChainError,
     SignatureError,
     StoreError,
