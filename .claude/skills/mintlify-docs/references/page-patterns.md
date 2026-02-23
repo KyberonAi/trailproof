@@ -19,7 +19,7 @@ Structure (matches Attesta's introduction.mdx):
 1. `<Warning>` or `<Note>` for early release notice
 2. `<Note>` with product tagline
 3. `## The Problem` — bullet list or comparison table
-4. `## How [Product] Solves This` — architecture diagram in `<Frame>`
+4. `## How [Product] Solves This` — architecture diagram as `<img>` with `style={{ width: '100%', height: 'auto' }}`
 5. `## Core Pillars` — `<CardGroup cols={2}>` with 4 feature cards using `color` prop
 6. `## Quick Example` — code blocks showing the API
 7. `## Next Steps` — `<CardGroup cols={2}>` linking to key pages
