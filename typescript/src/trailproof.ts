@@ -5,6 +5,7 @@
 import { randomUUID } from "node:crypto";
 import { GENESIS_HASH, computeHash } from "./chain.js";
 import { SignatureError, ValidationError } from "./errors.js";
+import { signEvent, verifySignature } from "./signer.js";
 import type { TrailStore } from "./stores/base.js";
 import { MemoryStore } from "./stores/memory.js";
 import type { QueryFilters, QueryResult, TrailEvent, VerifyResult } from "./types.js";
@@ -129,7 +130,7 @@ export class Trailproof {
     const eventHash = computeHash(prevHash, eventForHash);
 
     // Build final event with real hash and optional fields
-    const event: TrailEvent = {
+    let event: TrailEvent = {
       event_id: eventId,
       event_type: options.eventType,
       timestamp,
@@ -141,6 +142,12 @@ export class Trailproof {
       ...(options.traceId != null ? { trace_id: options.traceId } : {}),
       ...(options.sessionId != null ? { session_id: options.sessionId } : {}),
     };
+
+    // Sign if signing key is configured
+    if (this._signingKey != null) {
+      const signature = signEvent(this._signingKey, event);
+      event = { ...event, signature };
+    }
 
     // Append to store
     this._store.append(event);
@@ -229,6 +236,17 @@ export class Trailproof {
         broken.push(i);
         chainBroken = true;
         continue;
+      }
+
+      // Verify signature if signing key is configured
+      if (this._signingKey != null && event.signature != null) {
+        try {
+          verifySignature(this._signingKey, event);
+        } catch {
+          broken.push(i);
+          chainBroken = true;
+          continue;
+        }
       }
 
       prevHash = event.hash;
