@@ -1,0 +1,97 @@
+---
+title: "Canonical JSON"
+description: "Deterministic JSON serialization for reproducible hashes across SDKs"
+icon: "code"
+---
+
+# Canonical JSON
+
+For the hash chain to work, the same event must always produce the same byte sequence. Trailproof uses canonical JSON -- a strict, deterministic serialization format.
+
+<Note>
+Canonical JSON is what makes cross-SDK parity possible. Python and TypeScript produce identical byte strings for the same event, so they produce identical hashes.
+</Note>
+
+## Rules
+
+Trailproof's canonical JSON follows these rules:
+
+1. **Keys sorted alphabetically** -- recursive for nested objects
+2. **Compact format** -- no whitespace (separators: `,` and `:`)
+3. **Exclude `hash` and `signature`** -- these fields are not part of the hash input
+4. **Exclude null/None fields** -- omitted entirely, not serialized as `null`
+5. **UTF-8 encoding** -- consistent byte representation
+
+## Example
+
+Given this event:
+
+```json
+{
+  "event_id": "abc-123",
+  "event_type": "myapp.user.login",
+  "timestamp": "2025-01-15T10:30:00Z",
+  "actor_id": "user-42",
+  "tenant_id": "acme-corp",
+  "trace_id": null,
+  "session_id": null,
+  "payload": { "method": "oauth", "ip": "1.2.3.4" },
+  "prev_hash": "0000...0000",
+  "hash": "a1b2c3...",
+  "signature": "hmac-sha256:..."
+}
+```
+
+The canonical JSON is:
+
+```json
+{"actor_id":"user-42","event_id":"abc-123","event_type":"myapp.user.login","payload":{"ip":"1.2.3.4","method":"oauth"},"prev_hash":"0000...0000","tenant_id":"acme-corp","timestamp":"2025-01-15T10:30:00Z"}
+```
+
+Notice:
+- Keys are sorted alphabetically (`actor_id` before `event_id` before `event_type`...)
+- `hash` and `signature` are excluded
+- `trace_id` and `session_id` are excluded because they're null
+- Payload keys are also sorted (`ip` before `method`)
+- No whitespace
+
+## Nested Objects
+
+Canonical JSON sorts keys recursively. If your payload contains nested objects, their keys are also sorted:
+
+```python
+payload = {
+    "details": {
+        "score": 0.95,
+        "action": "approved",
+    },
+    "actor": "agent-47",
+}
+
+# Canonical: {"actor":"agent-47","details":{"action":"approved","score":0.95}}
+```
+
+## Hash Computation
+
+The hash is computed by concatenating `prev_hash` with the canonical JSON, then applying SHA-256:
+
+```
+hash = SHA-256(prev_hash + canonical_json(event))
+```
+
+Both `prev_hash` and canonical JSON are plain strings -- the concatenation is string concatenation, then the result is hashed.
+
+<Warning>
+Changing any field value -- even adding a space to a string -- produces a completely different hash. The canonical format ensures this is deterministic and detectable.
+</Warning>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Event Envelope" icon="scroll" color="#1E40AF" href="/concepts/event-envelope">
+    The 10-field structure that gets serialized.
+  </Card>
+  <Card title="Hash Chain" icon="link" color="#1E3A8A" href="/concepts/hash-chain">
+    How canonical JSON feeds into the hash chain.
+  </Card>
+</CardGroup>

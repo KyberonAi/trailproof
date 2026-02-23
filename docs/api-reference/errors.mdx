@@ -1,0 +1,126 @@
+---
+title: "Errors"
+description: "Error types and error handling in Trailproof"
+icon: "triangle-exclamation"
+---
+
+# Errors
+
+Trailproof uses a structured error hierarchy. All errors extend `TrailproofError`.
+
+## Error Hierarchy
+
+```
+TrailproofError         Base error for all Trailproof errors
+  ValidationError       Invalid event data (missing/empty required fields)
+  StoreError            Storage failure (disk full, permissions, corrupt file)
+  ChainError            Hash chain is broken
+  SignatureError        HMAC verification failed
+```
+
+## Error Message Format
+
+All errors follow a consistent format:
+
+```
+Trailproof: {what went wrong} -- {context}
+```
+
+Examples:
+- `Trailproof: missing required field -- actor_id is required`
+- `Trailproof: store write failed -- permission denied`
+- `Trailproof: HMAC verification failed -- signature mismatch`
+
+## ValidationError
+
+Thrown by `emit()` when required fields are missing or empty.
+
+```python
+from trailproof import Trailproof, ValidationError
+
+tp = Trailproof()
+
+try:
+    tp.emit(
+        event_type="",            # empty -- invalid
+        actor_id="user-42",
+        tenant_id="acme-corp",
+        payload={},
+    )
+except ValidationError as e:
+    print(e)  # Trailproof: missing required field -- event_type is required
+```
+
+```typescript
+import { Trailproof, ValidationError } from "@kyberonai/trailproof";
+
+const tp = new Trailproof();
+
+try {
+  tp.emit({
+    eventType: "",              // empty -- invalid
+    actorId: "user-42",
+    tenantId: "acme-corp",
+    payload: {},
+  });
+} catch (e) {
+  if (e instanceof ValidationError) {
+    console.log(e.message);  // Trailproof: missing required field -- event_type is required
+  }
+}
+```
+
+Required fields that trigger `ValidationError` when missing or empty:
+- `event_type` / `eventType`
+- `actor_id` / `actorId`
+- `tenant_id` / `tenantId`
+- `payload`
+
+## StoreError
+
+Thrown when the storage backend fails -- for example, when the JSONL file can't be written.
+
+```python
+from trailproof import StoreError
+
+# StoreError is raised on disk full, permission denied, etc.
+```
+
+## ChainError
+
+Represents a broken hash chain. Note that `verify()` does **not** throw this error -- it returns a `VerifyResult` with `intact: false`. `ChainError` is available for application code that needs to raise chain-related errors.
+
+## SignatureError
+
+Thrown when HMAC verification fails -- for example, when an event has a `signature` field but no signing key is configured.
+
+```python
+from trailproof import SignatureError
+
+# SignatureError is raised on HMAC verification failures
+```
+
+## Catching All Trailproof Errors
+
+Use the base class to catch any Trailproof error:
+
+```python
+from trailproof import TrailproofError
+
+try:
+    tp.emit(...)
+except TrailproofError as e:
+    print(f"Trailproof error: {e}")
+```
+
+```typescript
+import { TrailproofError } from "@kyberonai/trailproof";
+
+try {
+  tp.emit({ ... });
+} catch (e) {
+  if (e instanceof TrailproofError) {
+    console.log(`Trailproof error: ${e.message}`);
+  }
+}
+```

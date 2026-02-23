@@ -1,0 +1,125 @@
+---
+title: "HMAC Signing"
+description: "Add cryptographic provenance to your audit events with HMAC-SHA256"
+icon: "key"
+---
+
+# HMAC Signing
+
+HMAC signing adds a provenance layer on top of the hash chain. While the hash chain proves events weren't modified, HMAC signatures prove events were created by the holder of a specific secret key.
+
+## When to Use HMAC
+
+- **Multi-service architectures** -- prove which service produced an event
+- **Regulatory compliance** -- demonstrate provenance of audit records
+- **Zero-trust environments** -- verify events weren't injected by unauthorized parties
+
+<Note>
+HMAC signing is optional. The hash chain alone provides tamper detection. HMAC adds proof of origin.
+</Note>
+
+## Setup
+
+Pass a `signing_key` when creating the Trailproof instance:
+
+```python
+from trailproof import Trailproof
+
+tp = Trailproof(signing_key="your-secret-key")
+```
+
+```typescript
+import { Trailproof } from "@kyberonai/trailproof";
+
+const tp = new Trailproof({ signingKey: "your-secret-key" });
+```
+
+Every event emitted through this instance will have a `signature` field.
+
+## Signature Format
+
+Signatures follow the format:
+
+```
+hmac-sha256:<hex-digest>
+```
+
+The hex digest is computed as `HMAC-SHA256(signing_key, canonical_json(event))`. The canonical JSON excludes the `hash` and `signature` fields.
+
+## Example
+
+```python
+tp = Trailproof(signing_key="my-secret")
+
+event = tp.emit(
+    event_type="myapp.user.login",
+    actor_id="user-42",
+    tenant_id="acme-corp",
+    payload={"method": "oauth"},
+)
+
+print(event.signature)
+# hmac-sha256:a1b2c3d4e5f6...
+```
+
+```typescript
+const tp = new Trailproof({ signingKey: "my-secret" });
+
+const event = tp.emit({
+  eventType: "myapp.user.login",
+  actorId: "user-42",
+  tenantId: "acme-corp",
+  payload: { method: "oauth" },
+});
+
+console.log(event.signature);
+// hmac-sha256:a1b2c3d4e5f6...
+```
+
+## Verification
+
+Signature verification uses timing-safe comparison to prevent timing attacks.
+
+<Warning>
+If an event has a `signature` field but no signing key is configured on the Trailproof instance, a `SignatureError` is thrown during verification.
+</Warning>
+
+## Hash Chain Independence
+
+The hash chain and HMAC signing are independent layers:
+
+- **Hash chain** -- proves events weren't modified (integrity)
+- **HMAC signing** -- proves events were created by a key holder (provenance)
+
+The hash is computed from `prev_hash + canonical_json(event)`. The signature is computed from `canonical_json(event)` alone. Modifying either the hash or the signature will be detected, but through different verification paths.
+
+## Key Management
+
+Trailproof does not manage keys -- you provide the key, and Trailproof signs events with it.
+
+<Tip>
+Store your HMAC signing key in environment variables or a secrets manager. Never hardcode it in source code.
+</Tip>
+
+```python
+import os
+
+tp = Trailproof(signing_key=os.environ["TRAILPROOF_SIGNING_KEY"])
+```
+
+```typescript
+const tp = new Trailproof({
+  signingKey: process.env.TRAILPROOF_SIGNING_KEY!,
+});
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Hash Chain" icon="link" color="#1E40AF" href="/concepts/hash-chain">
+    How the hash chain provides tamper detection.
+  </Card>
+  <Card title="Verification" icon="shield-check" color="#1E3A8A" href="/guides/verification">
+    Verify both chain integrity and signatures.
+  </Card>
+</CardGroup>

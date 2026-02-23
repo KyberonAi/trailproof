@@ -1,0 +1,113 @@
+---
+title: "Verification"
+description: "Deep dive into verifying hash chain integrity and detecting tampering"
+icon: "shield-check"
+---
+
+# Verification
+
+Trailproof's `verify()` method walks the entire hash chain, recomputing every hash and comparing it to the stored value. Any mismatch indicates tampering.
+
+## How Verification Works
+
+The verifier starts at the genesis hash and walks forward through every event:
+
+1. Set `expected_prev = "0" × 64` (genesis hash)
+2. For each event at index `i`:
+   - Recompute `expected_hash = SHA-256(expected_prev + canonical_json(event))`
+   - If `event.hash != expected_hash`, add `i` to `broken`
+   - Set `expected_prev = event.hash` (always advance — detect cascading breaks)
+3. Return `VerifyResult { intact, total, broken }`
+
+## Basic Usage
+
+```python
+from trailproof import Trailproof
+
+tp = Trailproof()
+
+# Emit some events
+tp.emit(event_type="app.action", actor_id="user-42", tenant_id="acme", payload={"step": 1})
+tp.emit(event_type="app.action", actor_id="user-42", tenant_id="acme", payload={"step": 2})
+tp.emit(event_type="app.action", actor_id="user-42", tenant_id="acme", payload={"step": 3})
+
+# Verify
+result = tp.verify()
+print(result.intact)   # True
+print(result.total)    # 3
+print(result.broken)   # []
+```
+
+```typescript
+import { Trailproof } from "@kyberonai/trailproof";
+
+const tp = new Trailproof();
+
+tp.emit({ eventType: "app.action", actorId: "user-42", tenantId: "acme", payload: { step: 1 } });
+tp.emit({ eventType: "app.action", actorId: "user-42", tenantId: "acme", payload: { step: 2 } });
+tp.emit({ eventType: "app.action", actorId: "user-42", tenantId: "acme", payload: { step: 3 } });
+
+const result = tp.verify();
+console.log(result.intact);  // true
+console.log(result.total);   // 3
+console.log(result.broken);  // []
+```
+
+## Cascading Breaks
+
+When one event is tampered, every subsequent event also appears broken. This is by design — each event's hash depends on the previous event's hash.
+
+If someone modifies event 2 in a chain of 5:
+- Event 2: hash mismatch (the tampered event)
+- Event 3: `prev_hash` no longer matches event 2's new hash
+- Events 3–5: all broken due to cascading failure
+
+<Warning>
+The `broken` array may contain many indices even if only one event was actually modified. The first index in the array is typically the actual tampered event.
+</Warning>
+
+## Empty Chain
+
+Verifying an empty chain returns a clean result:
+
+```python
+tp = Trailproof()
+result = tp.verify()
+print(result.intact)  # True
+print(result.total)   # 0
+print(result.broken)  # []
+```
+
+<Note>
+Verification does not throw exceptions on broken chains — it returns the result. Always check `result.intact` to determine chain validity.
+</Note>
+
+## JSONL Store Verification
+
+Verification works the same regardless of store type. The JSONL store reads all events from disk and verifies the chain:
+
+```python
+tp = Trailproof(store="jsonl", path="events.jsonl")
+
+# Verify events loaded from disk
+result = tp.verify()
+if not result.intact:
+    print(f"Chain broken at indices: {result.broken}")
+```
+
+If the JSONL file contains corrupt lines (invalid JSON), those lines are skipped during read and their indices appear in `broken`.
+
+<Tip>
+Run `tp.verify()` on application startup to confirm your event file hasn't been tampered with while the process was down.
+</Tip>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Hash Chain" icon="link" color="#1E40AF" href="/concepts/hash-chain">
+    Understand the cryptographic linking mechanism.
+  </Card>
+  <Card title="HMAC Signing" icon="key" color="#1E3A8A" href="/guides/hmac-signing">
+    Add provenance on top of chain integrity.
+  </Card>
+</CardGroup>

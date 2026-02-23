@@ -1,0 +1,92 @@
+---
+title: "Hash Chain"
+description: "How Trailproof links events cryptographically using SHA-256"
+icon: "link"
+---
+
+# Hash Chain
+
+Every event in Trailproof is linked to the previous one through a SHA-256 hash. This creates a chain where modifying any event breaks every link after it.
+
+<Note>
+The hash chain design is adopted from Attesta's proven production implementation.
+</Note>
+
+## How It Works
+
+1. The first event uses a **genesis hash** -- 64 zeros (`"0" x 64`) -- as its `prev_hash`
+2. Each event's `hash` is computed as `SHA-256(prev_hash + canonical_json(event))`
+3. The next event's `prev_hash` is set to the current event's `hash`
+
+```
+Genesis: prev_hash = "000000000000000000000000000000000000000000000000000000000000000"
+
+Event 1:
+  prev_hash = genesis_hash
+  hash_1    = SHA-256(genesis_hash + canonical_json(event_1))
+
+Event 2:
+  prev_hash = hash_1
+  hash_2    = SHA-256(hash_1 + canonical_json(event_2))
+
+Event N:
+  prev_hash = hash_{N-1}
+  hash_N    = SHA-256(hash_{N-1} + canonical_json(event_N))
+```
+
+## Why It Catches Tampering
+
+If someone modifies event 5 in a chain of 100:
+
+1. Event 5's recomputed hash no longer matches its stored `hash`
+2. Event 6's `prev_hash` no longer matches event 5's new hash
+3. Events 6 through 100 all fail verification -- **cascading break**
+
+This makes tampering obvious and detectable. You can't silently modify one event without breaking everything after it.
+
+## Verification
+
+Trailproof walks the entire chain and recomputes every hash:
+
+```python
+verification = tp.verify()
+
+# VerifyResult:
+#   intact: bool    -- True if no tampering detected
+#   total:  int     -- number of events checked
+#   broken: list    -- indices of events that failed verification
+```
+
+```typescript
+const verification = tp.verify();
+
+// VerifyResult:
+//   intact: boolean   -- true if no tampering detected
+//   total:  number    -- number of events checked
+//   broken: number[]  -- indices of events that failed verification
+```
+
+An empty chain returns `{ intact: true, total: 0, broken: [] }`.
+
+## Cross-SDK Parity
+
+Both the Python and TypeScript SDKs produce **identical hashes** for the same event data. This is guaranteed by:
+
+- Shared canonical JSON algorithm (sorted keys, compact format, no nulls)
+- Shared genesis hash
+- Shared test vectors in `fixtures/test-vectors.json`
+
+<Tip>
+If you emit the same event data in Python and TypeScript, you get the same hash. This means you can verify events across services regardless of which SDK created them.
+</Tip>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Canonical JSON" icon="code" color="#1E40AF" href="/concepts/canonical-json">
+    How events are serialized for deterministic hashing.
+  </Card>
+  <Card title="Verification Guide" icon="shield-check" color="#1E3A8A" href="/guides/verification">
+    Practical guide to verifying chain integrity.
+  </Card>
+</CardGroup>

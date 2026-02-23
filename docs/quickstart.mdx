@@ -1,0 +1,180 @@
+---
+title: "Quickstart"
+description: "Install Trailproof and emit your first tamper-evident event in 5 minutes"
+icon: "rocket"
+---
+
+# Quickstart
+
+Get up and running with Trailproof in 5 minutes. You'll install the library, emit events, query them, and verify the chain is intact.
+
+## Installation
+
+**Python**
+
+```bash
+pip install trailproof
+# or
+uv add trailproof
+```
+
+**TypeScript / Node.js**
+
+```bash
+npm install @kyberonai/trailproof
+```
+
+## 1. Create a Trailproof Instance
+
+By default, Trailproof uses an in-memory store -- perfect for getting started.
+
+```python
+from trailproof import Trailproof
+
+tp = Trailproof()
+```
+
+```typescript
+import { Trailproof } from "@kyberonai/trailproof";
+
+const tp = new Trailproof();
+```
+
+## 2. Emit Events
+
+Every event needs an `event_type`, `actor_id`, `tenant_id`, and `payload`. Trailproof auto-generates `event_id`, `timestamp`, and the hash chain fields.
+
+```python
+event = tp.emit(
+    event_type="myapp.user.login",
+    actor_id="user-42",
+    tenant_id="acme-corp",
+    payload={"ip": "1.2.3.4", "method": "oauth"},
+)
+
+print(event.event_id)    # UUID v4
+print(event.hash)        # SHA-256 hash
+print(event.prev_hash)   # "0" * 64 (genesis)
+```
+
+```typescript
+const event = tp.emit({
+  eventType: "myapp.user.login",
+  actorId: "user-42",
+  tenantId: "acme-corp",
+  payload: { ip: "1.2.3.4", method: "oauth" },
+});
+
+console.log(event.eventId);   // UUID v4
+console.log(event.hash);      // SHA-256 hash
+console.log(event.prevHash);  // "0".repeat(64) (genesis)
+```
+
+<Note>
+The first event in the chain uses a genesis hash of 64 zeros as its `prev_hash`. Every subsequent event links to the hash of the previous event.
+</Note>
+
+## 3. Query Events
+
+Filter events by type, actor, tenant, time range, or any combination. Results are paginated with cursor-based navigation.
+
+```python
+result = tp.query(actor_id="user-42", limit=50)
+
+for event in result.events:
+    print(f"{event.event_type} at {event.timestamp}")
+
+# Paginate
+if result.next_cursor:
+    next_page = tp.query(actor_id="user-42", cursor=result.next_cursor)
+```
+
+```typescript
+const result = tp.query({ actorId: "user-42", limit: 50 });
+
+for (const event of result.events) {
+  console.log(`${event.eventType} at ${event.timestamp}`);
+}
+
+// Paginate
+if (result.nextCursor) {
+  const nextPage = tp.query({ actorId: "user-42", cursor: result.nextCursor });
+}
+```
+
+## 4. Verify Chain Integrity
+
+Walk the entire hash chain to confirm no events have been tampered with.
+
+```python
+verification = tp.verify()
+
+print(verification.intact)  # True
+print(verification.total)   # number of events
+print(verification.broken)  # [] (empty = no tampering)
+```
+
+```typescript
+const verification = tp.verify();
+
+console.log(verification.intact);  // true
+console.log(verification.total);   // number of events
+console.log(verification.broken);  // [] (empty = no tampering)
+```
+
+<Warning>
+If a tampered event is detected, `broken` contains the indices of all affected events. Because each event depends on the previous hash, tampering event N causes events N through the end to appear broken.
+</Warning>
+
+## 5. Persist to Disk
+
+Switch to the JSONL file store for events that survive restarts.
+
+```python
+tp = Trailproof(store="jsonl", path="events.jsonl")
+
+# Events are appended to the file as JSON lines
+event = tp.emit(
+    event_type="myapp.user.login",
+    actor_id="user-42",
+    tenant_id="acme-corp",
+    payload={"ip": "1.2.3.4"},
+)
+
+# Ensure all data is flushed to disk
+tp.flush()
+```
+
+```typescript
+const tp = new Trailproof({ store: "jsonl", path: "events.jsonl" });
+
+const event = tp.emit({
+  eventType: "myapp.user.login",
+  actorId: "user-42",
+  tenantId: "acme-corp",
+  payload: { ip: "1.2.3.4" },
+});
+
+tp.flush();
+```
+
+<Tip>
+The JSONL file is human-readable. Inspect it with `cat events.jsonl | jq .` or `grep "user-42" events.jsonl`.
+</Tip>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Event Envelope" icon="scroll" color="#1E40AF" href="/concepts/event-envelope">
+    Learn about the 10-field event structure.
+  </Card>
+  <Card title="HMAC Signing" icon="key" color="#1E3A8A" href="/guides/hmac-signing">
+    Add cryptographic provenance to your events.
+  </Card>
+  <Card title="JSONL Store" icon="file-code" color="#3B82F6" href="/guides/jsonl-store">
+    Configure persistent file-based storage.
+  </Card>
+  <Card title="Verification" icon="shield-check" color="#1E40AF" href="/guides/verification">
+    Deep dive into chain integrity verification.
+  </Card>
+</CardGroup>

@@ -1,0 +1,73 @@
+---
+title: "API Overview"
+description: "The five core methods that make up the Trailproof API"
+icon: "code"
+---
+
+# API Overview
+
+Both the Python and TypeScript SDKs expose the same five methods. Python uses `snake_case`, TypeScript uses `camelCase`.
+
+## Methods
+
+| Method | Python | TypeScript | Returns |
+|--------|--------|------------|---------|
+| Emit event | `tp.emit(event_type, actor_id, ...)` | `tp.emit({ eventType, actorId, ... })` | `TrailEvent` |
+| Query events | `tp.query(event_type, actor_id, ...)` | `tp.query({ eventType, actorId, ... })` | `QueryResult` |
+| Verify chain | `tp.verify()` | `tp.verify()` | `VerifyResult` |
+| Get by trace | `tp.get_trace(trace_id)` | `tp.getTrace(traceId)` | `TrailEvent[]` |
+| Flush to disk | `tp.flush()` | `tp.flush()` | `void` |
+
+## SDK Parity
+
+Both SDKs are functionally identical:
+
+- Same canonical JSON algorithm
+- Same SHA-256 hash chain
+- Same genesis hash (`"0" x 64`)
+- Same HMAC-SHA256 signing
+- Same error types
+- Same store interface
+- Shared test vectors ensure byte-for-byte hash parity
+
+<Note>
+The only differences between SDKs are language conventions: `snake_case` vs `camelCase` for method and field names, keyword arguments vs options objects for parameters.
+</Note>
+
+## Quick Reference
+
+```python
+from trailproof import Trailproof, TrailEvent, QueryResult, VerifyResult
+
+tp = Trailproof()
+
+event: TrailEvent = tp.emit(
+    event_type="app.action",
+    actor_id="user-42",
+    tenant_id="acme-corp",
+    payload={"key": "value"},
+)
+
+result: QueryResult = tp.query(actor_id="user-42", limit=50)
+verification: VerifyResult = tp.verify()
+events: list[TrailEvent] = tp.get_trace("trace-abc")
+tp.flush()
+```
+
+```typescript
+import { Trailproof, TrailEvent, QueryResult, VerifyResult } from "@kyberonai/trailproof";
+
+const tp = new Trailproof();
+
+const event: TrailEvent = tp.emit({
+  eventType: "app.action",
+  actorId: "user-42",
+  tenantId: "acme-corp",
+  payload: { key: "value" },
+});
+
+const result: QueryResult = tp.query({ actorId: "user-42", limit: 50 });
+const verification: VerifyResult = tp.verify();
+const events: TrailEvent[] = tp.getTrace("trace-abc");
+tp.flush();
+```
