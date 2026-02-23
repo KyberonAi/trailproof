@@ -1,4 +1,4 @@
-# Trailproof
+# TrailProof
 
 > Tamper-evident audit trail for AI agents and multi-tenant applications.
 
@@ -9,6 +9,24 @@
 
 Trailproof records events in a cryptographic hash chain. Every event commits to all
 events before it. Tamper anything — you break the chain. Verify any time.
+
+## Architecture
+
+```mermaid
+graph TD
+    App["Your Agentic App"] -->|"tp.emit({ type, actor, ... })"| TP
+
+    subgraph TP["Trailproof"]
+        EB["Event Builder<br/>validate &amp; envelope"] --> HC["Hash Chain Engine<br/>prev_hash + SHA-256"]
+        HC --> Store["Store<br/>(append-only)"]
+        Store --> QE["Query Engine<br/>filter &amp; paginate"]
+        Signer["Signer<br/>HMAC-SHA256<br/>(optional)"] -.-> HC
+        Verifier["Verifier<br/>chain integrity"] --> Store
+    end
+
+    Store --> Mem["Memory Store"]
+    Store --> JSONL["JSONL File Store"]
+```
 
 ## What It Does
 
