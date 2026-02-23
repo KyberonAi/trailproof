@@ -4,7 +4,7 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/trailproof.svg)](https://pypi.org/project/trailproof/)
 [![npm version](https://img.shields.io/npm/v/@kyberonai/trailproof.svg)](https://www.npmjs.com/package/@kyberonai/trailproof)
-[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![CI](https://github.com/KyberonAi/trailproof/actions/workflows/ci.yml/badge.svg)](https://github.com/KyberonAi/trailproof/actions/workflows/ci.yml)
 
 Trailproof records events in a cryptographic hash chain. Every event commits to all
@@ -193,4 +193,4 @@ Both `publish-python.yml` and `publish-npm.yml` trigger on `v*` tags and require
 
 - [Specification](SPEC.md)
 - [Changelog](CHANGELOG.md)
-- [Apache 2.0 License](LICENSE)
+- [MIT License](LICENSE)
