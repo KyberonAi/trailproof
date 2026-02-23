@@ -47,7 +47,7 @@ Check off the completed task in .claude/plans/$ARGUMENTS.md (change `- [ ]` to `
 
 ## Step 6. Commit
 
-Run the /commit command to stage and commit with user approval. Do NOT commit directly.
+You MUST invoke the /commit skill using the Skill tool — do NOT run git add/commit commands directly. The /commit skill handles staging, message drafting, and user approval. Never bypass it.
 
 ## Step 7. Report
 
