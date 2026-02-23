@@ -23,7 +23,7 @@ feature/core-api
 ### TypeScript SDK
 
 - [x] **Task 10:** Types and errors (TS mirror) — mirror Task 1: TrailEvent, QueryResult, VerifyResult interfaces and error classes with tests — scope: `typescript`, complexity: `medium`
-- [ ] **Task 11:** Hash chain engine (TS mirror) — mirror Task 2: canonical JSON and SHA-256 with Node.js crypto; tests — scope: `typescript`, complexity: `medium`
+- [x] **Task 11:** Hash chain engine (TS mirror) — mirror Task 2: canonical JSON and SHA-256 with Node.js crypto; tests — scope: `typescript`, complexity: `medium`
 - [ ] **Task 12:** Store interface and memory store (TS mirror) — mirror Task 3: TrailStore interface and MemoryStore; tests — scope: `typescript`, complexity: `medium`
 - [ ] **Task 13:** Trailproof class with emit() (TS mirror) — mirror Task 4: constructor, emit with validation and hashing; tests — scope: `typescript`, complexity: `large`
 - [ ] **Task 14:** query(), getTrace(), verify(), flush() (TS mirror) — mirror Tasks 5-6: all query/verify methods; tests — scope: `typescript`, complexity: `large`
