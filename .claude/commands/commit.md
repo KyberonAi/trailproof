@@ -1,10 +1,23 @@
 ---
 description: Stage changes and create a commit with user approval
 argument-hint: (optional) commit message hint
-allowed-tools: Bash(git status), Bash(git diff *), Bash(git add *), Bash(git commit *), Bash(git log *)
+allowed-tools: Bash(git status), Bash(git diff *), Bash(git add *), Bash(git commit *), Bash(git log *), Bash(git branch *), Bash(git checkout *), Bash(git rev-parse *)
 ---
 
 Analyze changes and create a commit.
+
+## Step 0. Branch guard
+
+Run `git branch --show-current` to check the current branch.
+
+If on `main`:
+1. Tell the user: "You're on main. Direct commits to main are not allowed."
+2. Suggest a branch name based on the changes (e.g., `chore/release-command`, `fix/typo-readme`).
+3. Ask the user to confirm the branch name.
+4. Create and switch to the branch: `git checkout -b {branch-name}`
+5. Then continue with Step 1.
+
+If already on a feature branch, continue normally.
 
 ## Step 1. Understand the changes
 
