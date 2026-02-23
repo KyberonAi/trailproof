@@ -17,7 +17,7 @@ feature/core-api
 - [x] **Task 5:** query() and get_trace() — implement query with all filters, cursor pagination, and get_trace; add tests — scope: `python`, complexity: `medium`
 - [x] **Task 6:** verify() and flush() — implement chain verification returning VerifyResult, flush as no-op for memory store; add tests — scope: `python`, complexity: `medium`
 - [x] **Task 7:** HMAC signer — implement optional HMAC-SHA256 signing and verification with timing-safe comparison; add tests — scope: `python`, complexity: `medium`
-- [ ] **Task 8:** JSONL file store — implement append-only JSONL storage with 0o600 permissions, file recovery on init, corrupt line handling; add tests — scope: `python`, complexity: `large`
+- [x] **Task 8:** JSONL file store — implement append-only JSONL storage with 0o600 permissions, file recovery on init, corrupt line handling; add tests — scope: `python`, complexity: `large`
 - [ ] **Task 9:** Public API exports — wire up __init__.py re-exports, ensure `make all` passes cleanly — scope: `python`, complexity: `small`
 
 ### TypeScript SDK

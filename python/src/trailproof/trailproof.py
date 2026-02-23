@@ -41,13 +41,8 @@ class Trailproof:
                 raise ValidationError(
                     "Trailproof: missing required parameter — path is required for jsonl store"
                 )
-            # Lazy import — JsonlStore is implemented in Task 8
-            try:
-                from trailproof.stores.jsonl import JsonlStore  # type: ignore[import-untyped]
-            except ImportError as exc:
-                raise ValidationError(
-                    "Trailproof: jsonl store not available — install or check your build"
-                ) from exc
+            from trailproof.stores.jsonl import JsonlStore
+
             self._store = JsonlStore(path)
         else:
             raise ValidationError(f"Trailproof: invalid store type — '{store}' is not supported")
