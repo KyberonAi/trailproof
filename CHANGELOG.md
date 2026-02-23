@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.1.0] - 2026-02-23
 
 ### Added
 
@@ -25,6 +25,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - add TypeScript JSONL file store with recovery and permissions (Task 16)
 - add cross-SDK test vectors to verify Python/TypeScript parity (Task 18)
 
+### Documentation
+
+- add README with badges, quickstart, and release checklist
+- add architecture diagram to README and CI/CD spec and plan
+
 ### Maintenance
 
 - initial skeleton
@@ -39,5 +44,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - add Apache 2.0 LICENSE
 - update license declarations to Apache-2.0
 - add cliff.toml for git-cliff changelog generation
+- generate CHANGELOG.md from git history
+- add PyPI publish workflow using OIDC trusted publisher
+- add npm publish workflow using OIDC trusted publisher
+- add release command for automated version tagging and publishing
+- add branch guard to commit command to prevent direct commits to main
 
 
