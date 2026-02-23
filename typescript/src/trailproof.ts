@@ -3,11 +3,11 @@
  */
 
 import { randomUUID } from "node:crypto";
-import { computeHash } from "./chain.js";
-import { ValidationError } from "./errors.js";
+import { GENESIS_HASH, computeHash } from "./chain.js";
+import { SignatureError, ValidationError } from "./errors.js";
 import type { TrailStore } from "./stores/base.js";
 import { MemoryStore } from "./stores/memory.js";
-import type { TrailEvent } from "./types.js";
+import type { QueryFilters, QueryResult, TrailEvent, VerifyResult } from "./types.js";
 
 /** Options for constructing a Trailproof instance. */
 export interface TrailproofOptions {
@@ -19,6 +19,28 @@ export interface TrailproofOptions {
   signingKey?: string;
   /** Default tenant_id used when emit() is called without one. */
   defaultTenantId?: string;
+}
+
+/** Options for querying events. */
+export interface QueryOptions {
+  /** Filter by exact event type match. */
+  eventType?: string;
+  /** Filter by exact actor ID match. */
+  actorId?: string;
+  /** Filter by exact tenant ID match. */
+  tenantId?: string;
+  /** Filter by exact trace ID match. */
+  traceId?: string;
+  /** Filter by exact session ID match. */
+  sessionId?: string;
+  /** Include events at or after this ISO-8601 timestamp. */
+  fromTime?: string;
+  /** Include events at or before this ISO-8601 timestamp. */
+  toTime?: string;
+  /** Maximum number of events to return (default 100). */
+  limit?: number;
+  /** Resume pagination from this event_id. */
+  cursor?: string;
 }
 
 /** Options for emitting a new event. */
@@ -45,10 +67,12 @@ export interface EmitOptions {
 export class Trailproof {
   /** @internal */
   readonly _store: TrailStore;
+  private readonly _signingKey: string | undefined;
   private readonly defaultTenantId: string | undefined;
 
   constructor(options: TrailproofOptions = {}) {
     const storeType = options.store ?? "memory";
+    this._signingKey = options.signingKey;
     this.defaultTenantId = options.defaultTenantId;
 
     if (storeType === "memory") {
@@ -122,6 +146,105 @@ export class Trailproof {
     this._store.append(event);
 
     return event;
+  }
+
+  /**
+   * Query events with optional filters and cursor pagination.
+   *
+   * All filter parameters are optional. No filters returns all events
+   * up to the limit.
+   */
+  query(options: QueryOptions = {}): QueryResult {
+    const filters: QueryFilters = {
+      event_type: options.eventType,
+      actor_id: options.actorId,
+      tenant_id: options.tenantId,
+      trace_id: options.traceId,
+      session_id: options.sessionId,
+      from_time: options.fromTime,
+      to_time: options.toTime,
+      limit: options.limit,
+      cursor: options.cursor,
+    };
+    return this._store.query(filters);
+  }
+
+  /**
+   * Return all events with the given trace_id, ordered by timestamp.
+   */
+  getTrace(traceId: string): TrailEvent[] {
+    const result = this._store.query({ trace_id: traceId, limit: 10_000 });
+    return [...result.events].sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+  }
+
+  /**
+   * Verify the integrity of the entire hash chain.
+   *
+   * Walks every event and recomputes its hash. If any event's hash
+   * does not match, that index and all subsequent indices are reported
+   * as broken (cascading breaks).
+   */
+  verify(): VerifyResult {
+    const events = this._store.readAll();
+    const total = events.length;
+
+    if (total === 0) {
+      return { intact: true, total: 0, broken: [] };
+    }
+
+    const broken: number[] = [];
+    let prevHash = GENESIS_HASH;
+    let chainBroken = false;
+
+    for (let i = 0; i < events.length; i++) {
+      const event = events[i];
+      if (event == null) continue;
+
+      if (chainBroken) {
+        broken.push(i);
+        continue;
+      }
+
+      // Check for signature without key
+      if (event.signature != null && this._signingKey == null) {
+        throw new SignatureError(
+          "Trailproof: signature found but no signing key configured — cannot verify signature",
+        );
+      }
+
+      // Recompute hash using event with hash="" (as during emit)
+      const eventForHash: TrailEvent = {
+        event_id: event.event_id,
+        event_type: event.event_type,
+        timestamp: event.timestamp,
+        actor_id: event.actor_id,
+        tenant_id: event.tenant_id,
+        payload: event.payload,
+        prev_hash: event.prev_hash,
+        hash: "",
+      };
+      const expectedHash = computeHash(prevHash, eventForHash);
+
+      if (event.hash !== expectedHash || event.prev_hash !== prevHash) {
+        broken.push(i);
+        chainBroken = true;
+        continue;
+      }
+
+      prevHash = event.hash;
+    }
+
+    const intact = broken.length === 0;
+    return { intact, total, broken };
+  }
+
+  /**
+   * Flush any buffered data to the underlying store.
+   *
+   * For MemoryStore this is a no-op.
+   */
+  flush(): void {
+    // MemoryStore has no buffering; JSONL store will override if needed
   }
 
   private validateRequired(fieldName: string, value: string | undefined | null): void {
