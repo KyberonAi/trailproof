@@ -12,7 +12,7 @@ feature/core-api
 
 - [x] **Task 1:** Types and errors — define TrailEvent, QueryResult, VerifyResult, QueryFilters dataclasses and error hierarchy (TrailproofError, ValidationError, StoreError, ChainError, SignatureError) with tests — scope: `python`, complexity: `medium`
 - [x] **Task 2:** Hash chain engine — implement canonical JSON serialization and SHA-256 hash computation (genesis hash, chain linking) with tests — scope: `python`, complexity: `medium`
-- [ ] **Task 3:** Store interface and memory store — define TrailStore ABC (append, read_all, query, last_hash, count) and implement MemoryStore with tests — scope: `python`, complexity: `medium`
+- [x] **Task 3:** Store interface and memory store — define TrailStore ABC (append, read_all, query, last_hash, count) and implement MemoryStore with tests — scope: `python`, complexity: `medium`
 - [ ] **Task 4:** Trailproof class with emit() — implement the facade class with constructor (store, path, signing_key, default_tenant_id), emit() with validation and hash chaining, and tests — scope: `python`, complexity: `large`
 - [ ] **Task 5:** query() and get_trace() — implement query with all filters, cursor pagination, and get_trace; add tests — scope: `python`, complexity: `medium`
 - [ ] **Task 6:** verify() and flush() — implement chain verification returning VerifyResult, flush as no-op for memory store; add tests — scope: `python`, complexity: `medium`
