@@ -1,0 +1,112 @@
+{
+  "genesis_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "canonical_json": [
+    {
+      "description": "Basic event with simple payload",
+      "event": {
+        "event_id": "evt-001",
+        "event_type": "test.event",
+        "timestamp": "2025-01-01T00:00:00.000Z",
+        "actor_id": "actor-1",
+        "tenant_id": "tenant-1",
+        "payload": { "key": "value" },
+        "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "placeholder"
+      },
+      "expected": "{\"actor_id\":\"actor-1\",\"event_id\":\"evt-001\",\"event_type\":\"test.event\",\"payload\":{\"key\":\"value\"},\"prev_hash\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"tenant_id\":\"tenant-1\",\"timestamp\":\"2025-01-01T00:00:00.000Z\"}"
+    },
+    {
+      "description": "Nested payload with keys sorted recursively",
+      "event": {
+        "event_id": "evt-002",
+        "event_type": "test.nested",
+        "timestamp": "2025-01-01T00:00:01.000Z",
+        "actor_id": "actor-1",
+        "tenant_id": "tenant-1",
+        "payload": { "zebra": 1, "apple": { "nested_z": 3, "nested_a": 2 } },
+        "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "placeholder"
+      },
+      "expected": "{\"actor_id\":\"actor-1\",\"event_id\":\"evt-002\",\"event_type\":\"test.nested\",\"payload\":{\"apple\":{\"nested_a\":2,\"nested_z\":3},\"zebra\":1},\"prev_hash\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"tenant_id\":\"tenant-1\",\"timestamp\":\"2025-01-01T00:00:01.000Z\"}"
+    },
+    {
+      "description": "Event with optional trace_id and session_id",
+      "event": {
+        "event_id": "evt-003",
+        "event_type": "test.optional",
+        "timestamp": "2025-01-01T00:00:02.000Z",
+        "actor_id": "actor-1",
+        "tenant_id": "tenant-1",
+        "payload": { "data": true },
+        "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "placeholder",
+        "trace_id": "trace-abc",
+        "session_id": "session-xyz"
+      },
+      "expected": "{\"actor_id\":\"actor-1\",\"event_id\":\"evt-003\",\"event_type\":\"test.optional\",\"payload\":{\"data\":true},\"prev_hash\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"session_id\":\"session-xyz\",\"tenant_id\":\"tenant-1\",\"timestamp\":\"2025-01-01T00:00:02.000Z\",\"trace_id\":\"trace-abc\"}"
+    },
+    {
+      "description": "Event with unicode and emoji in payload",
+      "event": {
+        "event_id": "evt-004",
+        "event_type": "test.unicode",
+        "timestamp": "2025-01-01T00:00:03.000Z",
+        "actor_id": "actor-1",
+        "tenant_id": "tenant-1",
+        "payload": { "greeting": "héllo wörld", "emoji": "\ud83c\udf89" },
+        "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "placeholder"
+      },
+      "expected": "{\"actor_id\":\"actor-1\",\"event_id\":\"evt-004\",\"event_type\":\"test.unicode\",\"payload\":{\"emoji\":\"🎉\",\"greeting\":\"héllo wörld\"},\"prev_hash\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"tenant_id\":\"tenant-1\",\"timestamp\":\"2025-01-01T00:00:03.000Z\"}"
+    }
+  ],
+  "hash_chain": [
+    {
+      "description": "Genesis event hash",
+      "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "event": {
+        "event_id": "evt-001",
+        "event_type": "test.event",
+        "timestamp": "2025-01-01T00:00:00.000Z",
+        "actor_id": "actor-1",
+        "tenant_id": "tenant-1",
+        "payload": { "key": "value" },
+        "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": ""
+      },
+      "expected_hash": "676819919f808ed19f7f06870297da8ec8be0306aef0bc270d107e6c8d80c7be"
+    },
+    {
+      "description": "Second event chained to first",
+      "prev_hash": "676819919f808ed19f7f06870297da8ec8be0306aef0bc270d107e6c8d80c7be",
+      "event": {
+        "event_id": "evt-002",
+        "event_type": "test.event",
+        "timestamp": "2025-01-01T00:00:01.000Z",
+        "actor_id": "actor-1",
+        "tenant_id": "tenant-1",
+        "payload": { "key": "value2" },
+        "prev_hash": "676819919f808ed19f7f06870297da8ec8be0306aef0bc270d107e6c8d80c7be",
+        "hash": ""
+      },
+      "expected_hash": "b593575bc9ac917354c7b4894498627927950dfc67f776f1077ce32933eaa64d"
+    }
+  ],
+  "hmac": [
+    {
+      "description": "HMAC-SHA256 signature for basic event",
+      "key": "test-secret-key",
+      "event": {
+        "event_id": "evt-001",
+        "event_type": "test.event",
+        "timestamp": "2025-01-01T00:00:00.000Z",
+        "actor_id": "actor-1",
+        "tenant_id": "tenant-1",
+        "payload": { "key": "value" },
+        "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "abc123"
+      },
+      "expected_signature": "hmac-sha256:612e20db84c2ea06c181fb8e13de79ff379ea8bdc08da67278d4a093e4e1f2f7"
+    }
+  ]
+}

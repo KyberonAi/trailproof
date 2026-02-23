@@ -49,3 +49,4 @@ Rules:
 - Do NOT auto-commit — wait for user approval
 - Do NOT stage files without showing them and getting approval first
 - Do NOT stage sensitive files (.env, credentials, secrets)
+- Do NOT add "Co-Authored-By" trailers or any other trailers to commit messages

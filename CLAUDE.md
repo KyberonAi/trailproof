@@ -65,6 +65,12 @@ Example: `Trailproof: missing required field — actor_id is required`
 - Python: `test_{method}_{scenario}_{expected}` (e.g., `test_emit_missing_actor_raises_validation_error`)
 - TypeScript: `describe` / `it` blocks (e.g., `describe("emit") > it("throws ValidationError when actor_id missing")`)
 
+### Commit Messages
+
+- Do NOT append "Co-Authored-By" trailers or any other trailers to commit messages
+- Use conventional commits (feat:, fix:, chore:, docs:, test:)
+- Present tense, explain "why" not just "what"
+
 ### Build Order
 
 Python first, TypeScript mirrors after. Each step: Python -> TypeScript -> shared test vectors -> commit.
