@@ -5,6 +5,7 @@ The Python SDK is the primary implementation. TypeScript mirrors it. Build Pytho
 ## Stack
 
 - Python 3.11+
+- Package manager: uv
 - Build: hatchling (pyproject.toml)
 - Lint: ruff
 - Types: mypy (strict)

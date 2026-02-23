@@ -8,6 +8,7 @@
       "Bash(mypy *)",
       "Bash(tsc *)",
       "Bash(python *)",
+      "Bash(uv *)",
       "Bash(pip install *)",
       "Bash(npm install *)",
       "Bash(git add *)",
