@@ -29,9 +29,7 @@ AI agents make autonomous decisions -- approving requests, writing to memory, ca
 
 Every event flows through a validation, hashing, optional signing, and append-only storage pipeline. Verification walks the chain backwards to check integrity.
 
-<Frame>
-  <img src="/images/trailproof-flow.svg" alt="Trailproof pipeline: Your App → Event Builder (validate + envelope) → Hash Chain Engine (SHA-256) → Optional HMAC Signer → Append-Only Store (Memory or JSONL) → Verify + Query" />
-</Frame>
+<img src="/images/trailproof-flow.svg" alt="Trailproof pipeline: Your App → Event Builder (validate + envelope) → Hash Chain Engine (SHA-256) → Optional HMAC Signer → Append-Only Store (Memory or JSONL) → Verify + Query" style={{ width: '100%', height: 'auto' }} />
 
 ## Core Pillars
 
