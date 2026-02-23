@@ -58,4 +58,5 @@ make all         lint + typecheck + test
 
 - Do not add runtime dependencies
 - Do not use `Any` in public API signatures
+- Do not use `from __future__ import annotations` — we target Python 3.11+, native syntax is fine
 - Do not modify pyproject.toml without asking

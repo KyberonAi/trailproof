@@ -47,7 +47,7 @@ Check off the completed task in .claude/plans/$ARGUMENTS.md (change `- [ ]` to `
 
 ## Step 6. Commit
 
-Stage the changed files and commit with a conventional commit message (feat/fix/chore/docs/test).
+Run the /commit command to stage and commit with user approval. Do NOT commit directly.
 
 ## Step 7. Report
 
