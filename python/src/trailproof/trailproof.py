@@ -4,7 +4,8 @@ import uuid
 from datetime import UTC, datetime
 
 from trailproof.chain import GENESIS_HASH, compute_hash
-from trailproof.errors import ValidationError
+from trailproof.errors import SignatureError, ValidationError
+from trailproof.signer import sign_event, verify_signature
 from trailproof.stores.base import TrailStore
 from trailproof.stores.memory import MemoryStore
 from trailproof.types import QueryFilters, QueryResult, TrailEvent, VerifyResult
@@ -126,6 +127,23 @@ class Trailproof:
             session_id=session_id,
         )
 
+        # Sign if signing key is configured
+        if self._signing_key is not None:
+            signature = sign_event(self._signing_key, event)
+            event = TrailEvent(
+                event_id=event.event_id,
+                event_type=event.event_type,
+                timestamp=event.timestamp,
+                actor_id=event.actor_id,
+                tenant_id=event.tenant_id,
+                payload=event.payload,
+                prev_hash=event.prev_hash,
+                hash=event.hash,
+                trace_id=event.trace_id,
+                session_id=event.session_id,
+                signature=signature,
+            )
+
         # Append to store
         self._store.append(event)
 
@@ -189,15 +207,21 @@ class Trailproof:
         return sorted(result.events, key=lambda e: e.timestamp)
 
     def verify(self) -> VerifyResult:
-        """Verify the integrity of the entire hash chain.
+        """Verify the integrity of the entire hash chain and signatures.
 
         Walks every event and recomputes its hash. If any event's hash
         does not match, that index and all subsequent indices are reported
         as broken (cascading breaks).
 
+        If a signing key is configured, also verifies each event's signature.
+        If an event has a signature but no key is configured, raises SignatureError.
+
         Returns:
             VerifyResult with intact=True if chain is valid, or
             intact=False with the list of broken indices.
+
+        Raises:
+            SignatureError: If an event has a signature but no signing key is configured.
         """
         events = self._store.read_all()
         total = len(events)
@@ -213,6 +237,13 @@ class Trailproof:
             if chain_broken:
                 broken.append(i)
                 continue
+
+            # Check for signature without key
+            if event.signature is not None and self._signing_key is None:
+                raise SignatureError(
+                    "Trailproof: signature found but no signing key configured "
+                    "— cannot verify signature"
+                )
 
             # Recompute hash using event with hash="" (as during emit)
             event_for_hash = TrailEvent(
@@ -230,8 +261,18 @@ class Trailproof:
             if event.hash != expected_hash or event.prev_hash != prev_hash:
                 broken.append(i)
                 chain_broken = True
-            else:
-                prev_hash = event.hash
+                continue
+
+            # Verify signature if signing key is configured
+            if self._signing_key is not None and event.signature is not None:
+                try:
+                    verify_signature(self._signing_key, event)
+                except SignatureError:
+                    broken.append(i)
+                    chain_broken = True
+                    continue
+
+            prev_hash = event.hash
 
         intact = len(broken) == 0
         return VerifyResult(intact=intact, total=total, broken=broken)
