@@ -1,0 +1,94 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "maple",
+  "name": "Trailproof",
+  "logo": { "dark": "/logo/dark.svg", "light": "/logo/light.svg" },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#0EA5E9",
+    "light": "#38BDF8",
+    "dark": "#0284C7"
+  },
+  "background": {
+    "color": {
+      "light": "#FFFFFF",
+      "dark": "#1A1A1F"
+    }
+  },
+  "fonts": {
+    "heading": { "family": "Space Grotesk", "weight": 700 },
+    "body": { "family": "Inter", "weight": 400 }
+  },
+  "navbar": {
+    "links": [
+      { "label": "GitHub", "href": "https://github.com/KyberonAi/trailproof", "type": "github" }
+    ],
+    "primary": { "label": "Get Started", "href": "/quickstart", "type": "button" }
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": ["introduction", "quickstart"]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "concepts/event-envelope",
+              "concepts/hash-chain",
+              "concepts/canonical-json"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/hmac-signing",
+              "guides/jsonl-store",
+              "guides/verification",
+              "guides/typescript-sdk"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "API Reference",
+            "pages": [
+              "api-reference/overview",
+              "api-reference/trailproof-class",
+              "api-reference/models",
+              "api-reference/errors",
+              "api-reference/config"
+            ]
+          }
+        ]
+      }
+    ],
+    "global": {}
+  },
+  "announcement": {
+    "title": "Trailproof v0.1.x is in early release. APIs are stable.",
+    "url": "/quickstart"
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/KyberonAi/trailproof"
+    }
+  },
+  "branding": false,
+  "layout": "sidenav",
+  "styling": {
+    "codeblocks": {
+      "theme": {
+        "light": "github-light",
+        "dark": "github-dark-dimmed"
+      }
+    }
+  },
+  "feedback": { "thumbsRating": true, "suggestEdit": true, "raiseIssue": true }
+}

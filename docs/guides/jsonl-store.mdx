@@ -1,0 +1,117 @@
+---
+title: "JSONL File Store"
+description: "Persist audit events to an append-only JSONL file"
+icon: "file-code"
+---
+
+# JSONL File Store
+
+The JSONL store persists events as one JSON object per line in an append-only file. Events survive process restarts and can be inspected with standard Unix tools.
+
+## Setup
+
+<CodeGroup>
+```python Python
+from trailproof import Trailproof
+
+tp = Trailproof(store="jsonl", path="events.jsonl")
+```
+
+```typescript TypeScript
+import { Trailproof } from "@kyberonai/trailproof";
+
+const tp = new Trailproof({ store: "jsonl", path: "events.jsonl" });
+```
+</CodeGroup>
+
+## File Format
+
+Each line is a complete JSON object representing one event:
+
+```
+{"event_id":"f47ac10b-...","event_type":"myapp.user.login","timestamp":"2025-01-15T10:30:00Z",...}
+{"event_id":"b23dc10c-...","event_type":"myapp.user.logout","timestamp":"2025-01-15T11:00:00Z",...}
+```
+
+## Inspecting Events
+
+JSONL files work with standard Unix tools:
+
+```bash
+# Pretty-print all events
+cat events.jsonl | jq .
+
+# Count events
+wc -l events.jsonl
+
+# Find events by actor
+grep "user-42" events.jsonl | jq .
+
+# Get the latest event
+tail -1 events.jsonl | jq .
+```
+
+## File Permissions
+
+The file is created with `0o600` permissions -- owner read/write only. This prevents other users on the system from reading your audit trail.
+
+## Chain Recovery
+
+On initialization, the JSONL store reads the existing file to recover:
+
+- **last_hash** -- the hash of the most recent event, so new events chain correctly
+- **event count** -- for internal bookkeeping
+
+This means you can stop and restart your application, and the hash chain continues from where it left off.
+
+## Corrupt Line Handling
+
+If the JSONL file contains a corrupt line (invalid JSON), the store handles it gracefully:
+
+- The corrupt line is skipped during read
+- A warning is logged
+- The corrupt line's index is included in `broken` when you call `verify()`
+
+<Warning>
+Corrupt lines don't prevent the store from functioning, but they will cause `verify()` to report the chain as broken at that index.
+</Warning>
+
+## Flushing
+
+Call `flush()` to ensure all buffered writes are persisted:
+
+<CodeGroup>
+```python Python
+tp.flush()
+```
+
+```typescript TypeScript
+tp.flush();
+```
+</CodeGroup>
+
+<Tip>
+Call `flush()` before process exit or at critical checkpoints to ensure no events are lost.
+</Tip>
+
+## When to Use JSONL vs Memory
+
+| Use Case | Recommended Store |
+|----------|-------------------|
+| Unit tests | Memory |
+| Development / prototyping | Memory |
+| Production services | JSONL |
+| Long-running processes | JSONL |
+| Serverless functions | JSONL |
+| CI/CD audit trails | JSONL |
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Configuration" icon="file-code" color="#0EA5E9" href="/api-reference/config">
+    All constructor options for Trailproof.
+  </Card>
+  <Card title="Verification" icon="shield-check" color="#0284C7" href="/guides/verification">
+    Verify chain integrity including JSONL recovery.
+  </Card>
+</CardGroup>

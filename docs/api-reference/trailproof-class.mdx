@@ -1,0 +1,178 @@
+---
+title: "Trailproof Class"
+description: "The main entry point for recording, querying, and verifying audit events"
+icon: "shield-check"
+---
+
+# Trailproof Class
+
+The `Trailproof` class is the main entry point. It manages the hash chain, store, and optional signer.
+
+## Constructor
+
+<CodeGroup>
+```python Python
+tp = Trailproof(
+    store="memory",              # "memory" (default) or "jsonl"
+    path=None,                   # file path (required for jsonl store)
+    signing_key=None,            # HMAC-SHA256 key (optional)
+    default_tenant_id=None,      # applied to every event if not specified
+)
+```
+
+```typescript TypeScript
+const tp = new Trailproof({
+  store: "memory",              // "memory" (default) or "jsonl"
+  path: undefined,              // file path (required for jsonl store)
+  signingKey: undefined,        // HMAC-SHA256 key (optional)
+  defaultTenantId: undefined,   // applied to every event if not specified
+});
+```
+</CodeGroup>
+
+## emit()
+
+Record a new event in the audit trail.
+
+<CodeGroup>
+```python Python
+event = tp.emit(
+    event_type="myapp.user.login",     # required
+    actor_id="user-42",                 # required
+    tenant_id="acme-corp",              # required (or use default_tenant_id)
+    payload={"ip": "1.2.3.4"},          # required
+    trace_id="trace-abc",               # optional
+    session_id="session-xyz",           # optional
+)
+```
+
+```typescript TypeScript
+const event = tp.emit({
+  eventType: "myapp.user.login",       // required
+  actorId: "user-42",                  // required
+  tenantId: "acme-corp",               // required (or use defaultTenantId)
+  payload: { ip: "1.2.3.4" },         // required
+  traceId: "trace-abc",               // optional
+  sessionId: "session-xyz",           // optional
+});
+```
+</CodeGroup>
+
+**Returns:** `TrailEvent` -- the complete event with auto-generated fields.
+
+**Throws:** `ValidationError` if required fields are missing or empty.
+
+**Behavior:**
+- Auto-generates `event_id` (UUID v4) and `timestamp` (ISO-8601 UTC)
+- Computes `hash` using the hash chain engine
+- Sets `prev_hash` to the previous event's hash (or genesis hash for the first event)
+- If a signing key is configured, computes and sets `signature`
+- Appends the event to the store
+
+## query()
+
+Search events with filters and pagination.
+
+<CodeGroup>
+```python Python
+result = tp.query(
+    event_type="myapp.user.login",       # optional
+    actor_id="user-42",                   # optional
+    tenant_id="acme-corp",                # optional
+    trace_id="trace-abc",                 # optional
+    session_id="session-xyz",             # optional
+    from_time="2025-01-01T00:00:00Z",    # optional
+    to_time="2025-12-31T23:59:59Z",      # optional
+    limit=100,                            # default 100
+    cursor=None,                          # for pagination
+)
+
+result.events       # list[TrailEvent]
+result.next_cursor  # str | None
+```
+
+```typescript TypeScript
+const result = tp.query({
+  eventType: "myapp.user.login",
+  actorId: "user-42",
+  tenantId: "acme-corp",
+  traceId: "trace-abc",
+  sessionId: "session-xyz",
+  fromTime: "2025-01-01T00:00:00Z",
+  toTime: "2025-12-31T23:59:59Z",
+  limit: 100,
+  cursor: undefined,
+});
+
+result.events;      // TrailEvent[]
+result.nextCursor;  // string | undefined
+```
+</CodeGroup>
+
+**Returns:** `QueryResult { events, next_cursor }`.
+
+All filters are optional. No filters returns all events up to `limit`. Filters use exact match except `from_time` and `to_time` which are range filters.
+
+## verify()
+
+Walk the hash chain and check every event's hash.
+
+<CodeGroup>
+```python Python
+result = tp.verify()
+
+result.intact   # bool -- True if no tampering
+result.total    # int -- number of events checked
+result.broken   # list[int] -- indices of broken events
+```
+
+```typescript TypeScript
+const result = tp.verify();
+
+result.intact;  // boolean -- true if no tampering
+result.total;   // number -- number of events checked
+result.broken;  // number[] -- indices of broken events
+```
+</CodeGroup>
+
+**Returns:** `VerifyResult { intact, total, broken }`.
+
+Empty chain returns `{ intact: true, total: 0, broken: [] }`.
+
+<Warning>
+Verification does not throw on broken chains -- it returns the result. Check `result.intact` to determine if the chain is valid.
+</Warning>
+
+## get_trace() / getTrace()
+
+Get all events for a specific trace ID, ordered by timestamp.
+
+<CodeGroup>
+```python Python
+events = tp.get_trace("trace-abc")
+# returns: list[TrailEvent]
+```
+
+```typescript TypeScript
+const events = tp.getTrace("trace-abc");
+// returns: TrailEvent[]
+```
+</CodeGroup>
+
+**Returns:** List of `TrailEvent` objects matching the trace ID, ordered by timestamp.
+
+## flush()
+
+Ensure all buffered events are persisted to disk.
+
+<CodeGroup>
+```python Python
+tp.flush()
+```
+
+```typescript TypeScript
+tp.flush();
+```
+</CodeGroup>
+
+No-op for the memory store. For the JSONL store, ensures all buffered writes are flushed to disk.

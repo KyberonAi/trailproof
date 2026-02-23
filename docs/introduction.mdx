@@ -1,0 +1,122 @@
+---
+title: "Introduction"
+description: "Tamper-evident audit trail library for AI agents and multi-tenant applications"
+icon: "shield-check"
+---
+
+<Warning>
+**Early Release (v0.1.x)** — Trailproof is under active development. The core API is functional and tested, but interfaces may change between minor versions. Pin your dependency to a specific version in production.
+</Warning>
+
+<Note>
+**Trailproof** = *Trail* + *Proof*. Every event is cryptographically chained — tamper one, and the entire chain proves it.
+</Note>
+
+## Why Trailproof?
+
+AI agents make autonomous decisions -- approving requests, writing to memory, calling external APIs. Regulators (EU AI Act Article 19) and customers increasingly demand proof that these actions were logged faithfully and that nothing was altered after the fact. Traditional logging can't provide that guarantee.
+
+| Capability | Basic Logging | **Trailproof** |
+|---|---|---|
+| **Tamper detection** | None — anyone with DB access can edit | SHA-256 hash chain; modify one event, every subsequent hash breaks |
+| **Cross-SDK parity** | Manual effort to keep in sync | Python + TypeScript produce identical hashes for same data |
+| **Dependencies** | Often pulls in heavy ORMs or cloud SDKs | Zero runtime deps — stdlib only |
+| **Provenance** | No proof of origin | Optional HMAC-SHA256 proves who created the event |
+| **Multi-tenancy** | Manual tenant isolation | Built-in `tenant_id` on every event |
+| **Verification** | Manual spot-checks | `tp.verify()` walks entire chain in one call |
+
+## The Trailproof Pipeline
+
+Every event flows through a validation, hashing, optional signing, and append-only storage pipeline. Verification walks the chain backwards to check integrity.
+
+<Frame>
+  <img src="/images/trailproof-flow.svg" alt="Trailproof pipeline: Your App → Event Builder (validate + envelope) → Hash Chain Engine (SHA-256) → Optional HMAC Signer → Append-Only Store (Memory or JSONL) → Verify + Query" />
+</Frame>
+
+## Core Pillars
+
+<CardGroup cols={2}>
+  <Card title="Tamper-Evident Chain" icon="link" color="#0EA5E9">
+    SHA-256 hash chain links every event to the previous one. Modify event 5 in a chain of 100 — events 5 through 100 all fail verification. You can't silently tamper with history.
+  </Card>
+  <Card title="Dual SDK Parity" icon="code" color="#0284C7">
+    Native libraries for Python and TypeScript with identical behavior. Same canonical JSON algorithm, same genesis hash, same test vectors. Emit in Python, verify in TypeScript.
+  </Card>
+  <Card title="Zero Dependencies" icon="feather" color="#38BDF8">
+    Stdlib-only in Python (`hashlib`, `json`, `uuid`), Node.js built-ins only in TypeScript (`crypto`, `fs`). No supply chain risk from your audit trail.
+  </Card>
+  <Card title="HMAC Signing" icon="key" color="#0EA5E9">
+    Optional HMAC-SHA256 signatures prove event provenance — that events were created by the holder of a specific secret key. Uses timing-safe comparison to prevent timing attacks.
+  </Card>
+</CardGroup>
+
+## Quick Example
+
+<CodeGroup>
+```python Python
+from trailproof import Trailproof
+
+tp = Trailproof()
+
+# Record an event
+event = tp.emit(
+    event_type="myapp.user.login",
+    actor_id="user-42",
+    tenant_id="acme-corp",
+    payload={"ip": "1.2.3.4", "method": "oauth"},
+)
+
+# Verify the entire chain is intact
+result = tp.verify()
+print(result.intact)  # True
+```
+
+```typescript TypeScript
+import { Trailproof } from "@kyberonai/trailproof";
+
+const tp = new Trailproof();
+
+const event = tp.emit({
+  eventType: "myapp.user.login",
+  actorId: "user-42",
+  tenantId: "acme-corp",
+  payload: { ip: "1.2.3.4", method: "oauth" },
+});
+
+const result = tp.verify();
+console.log(result.intact); // true
+```
+</CodeGroup>
+
+## The 10-Field Event Envelope
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `event_id` | string | UUID v4, auto-generated |
+| `event_type` | string | Namespaced type (e.g., `myapp.user.login`) |
+| `timestamp` | string | ISO-8601 UTC, auto-generated |
+| `actor_id` | string | Who performed the action |
+| `tenant_id` | string | Tenant/org isolation key |
+| `trace_id` | string? | Cross-system correlation |
+| `session_id` | string? | Session grouping |
+| `payload` | object | Domain-specific data (opaque to Trailproof) |
+| `prev_hash` | string | Hash of the previous event |
+| `hash` | string | SHA-256 of this event |
+| `signature` | string? | HMAC-SHA256 if signer configured |
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" color="#0EA5E9" href="/quickstart">
+    Install and emit your first event in 5 minutes.
+  </Card>
+  <Card title="Event Envelope" icon="scroll" color="#0284C7" href="/concepts/event-envelope">
+    Deep dive into the 10-field event structure.
+  </Card>
+  <Card title="Hash Chain" icon="link" color="#38BDF8" href="/concepts/hash-chain">
+    How events are cryptographically linked.
+  </Card>
+  <Card title="API Reference" icon="code" color="#0EA5E9" href="/api-reference/overview">
+    Full API documentation for both SDKs.
+  </Card>
+</CardGroup>

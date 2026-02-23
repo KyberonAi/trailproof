@@ -1,0 +1,99 @@
+---
+title: "Models"
+description: "TrailEvent, QueryResult, and VerifyResult data structures"
+icon: "scroll"
+---
+
+# Models
+
+Trailproof uses three core data structures.
+
+## TrailEvent
+
+The event envelope -- every recorded event has this shape.
+
+<CodeGroup>
+```python Python
+@dataclass
+class TrailEvent:
+    event_id: str         # UUID v4
+    event_type: str       # namespaced event type
+    timestamp: str        # ISO-8601 UTC
+    actor_id: str         # who performed the action
+    tenant_id: str        # tenant/org isolation key
+    trace_id: str | None  # cross-system correlation
+    session_id: str | None  # session grouping
+    payload: dict         # domain-specific data
+    prev_hash: str        # hash of previous event
+    hash: str             # SHA-256 hash of this event
+    signature: str | None # HMAC-SHA256 signature
+```
+
+```typescript TypeScript
+interface TrailEvent {
+  eventId: string;         // UUID v4
+  eventType: string;       // namespaced event type
+  timestamp: string;       // ISO-8601 UTC
+  actorId: string;         // who performed the action
+  tenantId: string;        // tenant/org isolation key
+  traceId?: string;        // cross-system correlation
+  sessionId?: string;      // session grouping
+  payload: Record<string, unknown>;  // domain-specific data
+  prevHash: string;        // hash of previous event
+  hash: string;            // SHA-256 hash of this event
+  signature?: string;      // HMAC-SHA256 signature
+}
+```
+</CodeGroup>
+
+## QueryResult
+
+Returned by `query()`. Contains matching events and an optional cursor for pagination.
+
+<CodeGroup>
+```python Python
+@dataclass
+class QueryResult:
+    events: list[TrailEvent]    # matching events
+    next_cursor: str | None     # cursor for next page, None if no more
+```
+
+```typescript TypeScript
+interface QueryResult {
+  events: TrailEvent[];         // matching events
+  nextCursor?: string;          // cursor for next page
+}
+```
+</CodeGroup>
+
+When `next_cursor` / `nextCursor` is present, pass it back to `query()` to get the next page of results.
+
+## VerifyResult
+
+Returned by `verify()`. Reports the integrity status of the hash chain.
+
+<CodeGroup>
+```python Python
+@dataclass
+class VerifyResult:
+    intact: bool          # True if no tampering detected
+    total: int            # number of events checked
+    broken: list[int]     # indices of events that failed verification
+```
+
+```typescript TypeScript
+interface VerifyResult {
+  intact: boolean;        // true if no tampering detected
+  total: number;          // number of events checked
+  broken: number[];       // indices of events that failed verification
+}
+```
+</CodeGroup>
+
+- `intact` is `True`/`true` when `broken` is empty
+- `broken` contains 0-based indices of events whose hash doesn't match the recomputed value
+- An empty chain returns `{ intact: true, total: 0, broken: [] }`
+
+<Note>
+When a single event is tampered, all subsequent events also appear in `broken` due to cascading hash chain failure.
+</Note>

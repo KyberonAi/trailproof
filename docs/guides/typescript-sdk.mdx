@@ -1,0 +1,141 @@
+---
+title: "TypeScript SDK"
+description: "Using Trailproof with TypeScript and Node.js"
+icon: "code"
+---
+
+# TypeScript SDK
+
+The TypeScript SDK mirrors the Python SDK exactly. Same hash chain algorithm, same canonical JSON, same test vectors. The only differences are language conventions.
+
+## Installation
+
+```bash
+npm install @kyberonai/trailproof
+```
+
+Requires Node.js 18+. Zero runtime dependencies — uses only Node.js built-in modules (`crypto`, `fs`, `path`).
+
+## Import
+
+```typescript TypeScript
+import {
+  Trailproof,
+  TrailEvent,
+  QueryResult,
+  VerifyResult,
+  TrailproofError,
+  ValidationError,
+  StoreError,
+  ChainError,
+  SignatureError,
+} from "@kyberonai/trailproof";
+```
+
+## API Naming Convention
+
+TypeScript uses `camelCase` where Python uses `snake_case`:
+
+| Python | TypeScript |
+|--------|------------|
+| `event_type` | `eventType` |
+| `actor_id` | `actorId` |
+| `tenant_id` | `tenantId` |
+| `trace_id` | `traceId` |
+| `session_id` | `sessionId` |
+| `prev_hash` | `prevHash` |
+| `event_id` | `eventId` |
+| `signing_key` | `signingKey` |
+| `default_tenant_id` | `defaultTenantId` |
+| `from_time` | `fromTime` |
+| `to_time` | `toTime` |
+| `next_cursor` | `nextCursor` |
+| `get_trace()` | `getTrace()` |
+
+## Full Example
+
+```typescript TypeScript
+import { Trailproof } from "@kyberonai/trailproof";
+
+// Create with JSONL store and HMAC signing
+const tp = new Trailproof({
+  store: "jsonl",
+  path: "events.jsonl",
+  signingKey: process.env.TRAILPROOF_KEY!,
+  defaultTenantId: "acme-corp",
+});
+
+// Emit events
+const event = tp.emit({
+  eventType: "myapp.user.login",
+  actorId: "user-42",
+  payload: { ip: "1.2.3.4", method: "oauth" },
+  traceId: "trace-abc",
+});
+
+// Query
+const result = tp.query({ actorId: "user-42", limit: 50 });
+for (const e of result.events) {
+  console.log(`${e.eventType} at ${e.timestamp}`);
+}
+
+// Verify
+const verification = tp.verify();
+console.log(verification.intact); // true
+
+// Get trace
+const trace = tp.getTrace("trace-abc");
+
+// Flush
+tp.flush();
+```
+
+## Options Object Pattern
+
+TypeScript uses options objects instead of keyword arguments:
+
+```typescript TypeScript
+// Constructor
+const tp = new Trailproof({ store: "jsonl", path: "events.jsonl" });
+
+// emit() takes an options object
+const event = tp.emit({ eventType: "...", actorId: "...", tenantId: "...", payload: {} });
+
+// query() takes an options object
+const result = tp.query({ eventType: "...", limit: 50 });
+```
+
+## Error Handling
+
+```typescript TypeScript
+import { Trailproof, ValidationError, TrailproofError } from "@kyberonai/trailproof";
+
+const tp = new Trailproof();
+
+try {
+  tp.emit({ eventType: "", actorId: "user", tenantId: "t", payload: {} });
+} catch (e) {
+  if (e instanceof ValidationError) {
+    console.log(e.message); // Trailproof: missing required field — event_type is required
+  }
+}
+```
+
+## Cross-SDK Parity
+
+Both SDKs produce identical hashes for the same input data. This is enforced by shared test vectors in `fixtures/test-vectors.json`.
+
+<Tip>
+You can emit events in a Python service and verify them in a TypeScript service (or vice versa) as long as both read from the same store.
+</Tip>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="API Reference" icon="code" color="#0EA5E9" href="/api-reference/overview">
+    Full API documentation for both SDKs.
+  </Card>
+  <Card title="Configuration" icon="gear" color="#0284C7" href="/api-reference/config">
+    All constructor options.
+  </Card>
+</CardGroup>
