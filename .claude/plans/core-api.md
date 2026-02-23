@@ -33,7 +33,7 @@ feature/core-api
 
 ### Shared
 
-- [ ] **Task 18:** Cross-SDK test vectors — create fixtures/test-vectors.json with canonical JSON, hash chain, and HMAC test cases; verify both SDKs produce identical results — scope: `both`, complexity: `medium`
+- [x] **Task 18:** Cross-SDK test vectors — create fixtures/test-vectors.json with canonical JSON, hash chain, and HMAC test cases; verify both SDKs produce identical results — scope: `both`, complexity: `medium`
 
 ## Dependencies
 
