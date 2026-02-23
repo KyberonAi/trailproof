@@ -1,5 +1,5 @@
 {
-  "name": "@kyberon/trailproof",
+  "name": "@kyberonai/trailproof",
   "version": "0.1.0",
   "description": "Tamper-evident audit trail library using hash chains and optional HMAC signing",
   "type": "module",

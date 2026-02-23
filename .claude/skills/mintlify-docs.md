@@ -197,7 +197,7 @@ event = tp.emit(
 ```
 
 ```typescript
-import { Trailproof } from "@kyberon/trailproof";
+import { Trailproof } from "@kyberonai/trailproof";
 
 const tp = new Trailproof();
 const event = tp.emit({

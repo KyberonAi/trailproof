@@ -50,7 +50,7 @@ Spec: `.claude/specs/cicd-release-flow.md` (approved)
   7. Configuration examples (both SDKs)
   8. Releasing checklist (version bump → tag → push → approve)
   9. Links (SPEC.md, CHANGELOG, LICENSE)
-- Badge URLs: `img.shields.io/pypi/v/trailproof.svg`, `img.shields.io/npm/v/@kyberon/trailproof.svg`, license badge, CI badge from `github.com/KyberonAi/trailproof/actions/workflows/ci.yml/badge.svg`
+- Badge URLs: `img.shields.io/pypi/v/trailproof.svg`, `img.shields.io/npm/v/@kyberonai/trailproof.svg`, license badge, CI badge from `github.com/KyberonAi/trailproof/actions/workflows/ci.yml/badge.svg`
 - Note: `pyproject.toml` has `readme = "../README.md"` so PyPI pulls from this file
 - **Commit:** `docs: add README with badges, quickstart, and release checklist`
 - **Verify:** visual check in GitHub preview; all badge URLs well-formed

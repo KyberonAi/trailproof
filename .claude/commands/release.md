@@ -52,7 +52,7 @@ Release Summary
 ───────────────
 Version:    v{version}
 Python:     trailproof {version} → PyPI
-TypeScript: @kyberon/trailproof {version} → npm
+TypeScript: @kyberonai/trailproof {version} → npm
 Tag:        v{version}
 Changelog:  Updated ✓
 Tests:      Python ✓ TypeScript ✓
@@ -93,7 +93,7 @@ Next steps:
    - Publish npm: https://github.com/KyberonAi/trailproof/actions/workflows/publish-npm.yml
 2. After both succeed, verify:
    - pip install trailproof=={version}
-   - npm install @kyberon/trailproof@{version}
+   - npm install @kyberonai/trailproof@{version}
 ```
 
 ## Rules

@@ -6,7 +6,7 @@ branch: feature/cicd-release-flow
 Draft
 
 ## Problem
-Trailproof's Core API is complete and merged but there's no way to publish the SDKs to PyPI or npm, no LICENSE file, no README, and no changelog. Developers can't `pip install trailproof` or `npm install @kyberon/trailproof`. The project needs publishing infrastructure using tokenless OIDC trusted publishers before the first v0.1.0 release.
+Trailproof's Core API is complete and merged but there's no way to publish the SDKs to PyPI or npm, no LICENSE file, no README, and no changelog. Developers can't `pip install trailproof` or `npm install @kyberonai/trailproof`. The project needs publishing infrastructure using tokenless OIDC trusted publishers before the first v0.1.0 release.
 
 ## Goals
 - Add Apache 2.0 LICENSE file

@@ -10,7 +10,7 @@ The TypeScript SDK mirrors the Python SDK. Same API surface, same behavior, came
 - Test: vitest
 - Runtime deps: none (Node.js built-ins only: crypto, fs, path)
 - Target: Node.js 18+
-- Package: @kyberon/trailproof
+- Package: @kyberonai/trailproof
 
 ## Module Structure
 

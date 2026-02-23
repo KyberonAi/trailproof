@@ -3,7 +3,7 @@
 > Tamper-evident audit trail for AI agents and multi-tenant applications.
 
 [![PyPI version](https://img.shields.io/pypi/v/trailproof.svg)](https://pypi.org/project/trailproof/)
-[![npm version](https://img.shields.io/npm/v/@kyberon/trailproof.svg)](https://www.npmjs.com/package/@kyberon/trailproof)
+[![npm version](https://img.shields.io/npm/v/@kyberonai/trailproof.svg)](https://www.npmjs.com/package/@kyberonai/trailproof)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![CI](https://github.com/KyberonAi/trailproof/actions/workflows/ci.yml/badge.svg)](https://github.com/KyberonAi/trailproof/actions/workflows/ci.yml)
 
@@ -49,7 +49,7 @@ uv add trailproof
 **TypeScript / Node.js**
 
 ```bash
-npm install @kyberon/trailproof
+npm install @kyberonai/trailproof
 ```
 
 ## Quickstart
@@ -83,7 +83,7 @@ print(verification.broken)   # []
 ### TypeScript
 
 ```typescript
-import { Trailproof } from "@kyberon/trailproof";
+import { Trailproof } from "@kyberonai/trailproof";
 
 const tp = new Trailproof();
 
@@ -160,7 +160,7 @@ tp = Trailproof(
 **TypeScript**
 
 ```typescript
-import { Trailproof } from "@kyberon/trailproof";
+import { Trailproof } from "@kyberonai/trailproof";
 
 // In-memory (default)
 const tp = new Trailproof();

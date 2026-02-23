@@ -107,7 +107,7 @@ tp.flush()
 
 ```typescript
 // TypeScript
-import { Trailproof, TrailEvent, QueryResult, VerifyResult } from "@kyberon/trailproof";
+import { Trailproof, TrailEvent, QueryResult, VerifyResult } from "@kyberonai/trailproof";
 
 // Construction
 const tp = new Trailproof();
