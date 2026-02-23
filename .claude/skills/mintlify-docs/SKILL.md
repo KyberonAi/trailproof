@@ -93,6 +93,7 @@ See `references/diagram-style.md` for SVG template and conventions.
 
 ## Common Mistakes
 
+- Do NOT use `<Frame>` for SVG diagrams — it adds an unwanted border/background container. Use `<img style={{ width: '100%', height: 'auto' }} />` instead
 - Do NOT use `mint.json` — Mintlify v4+ uses `docs.json`
 - Do NOT skip frontmatter — every page needs `title` minimum
 - Do NOT use relative links with `.mdx` extension

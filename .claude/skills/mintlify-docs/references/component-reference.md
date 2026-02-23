@@ -59,12 +59,12 @@
 </Steps>
 ```
 
-## Frames (for images/diagrams)
+## Images and Diagrams
+
+Do NOT use `<Frame>` for SVG diagrams — it adds an unwanted border and background container that clashes with the SVG's own dark background. Use a plain `<img>` with inline responsive styles instead:
 
 ```mdx
-<Frame>
-  <img src="/images/diagram.svg" alt="Descriptive alt text" />
-</Frame>
+<img src="/images/diagram.svg" alt="Descriptive alt text" style={{ width: '100%', height: 'auto' }} />
 ```
 
 ## CodeGroup
