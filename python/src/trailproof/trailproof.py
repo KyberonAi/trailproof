@@ -7,7 +7,7 @@ from trailproof.chain import compute_hash
 from trailproof.errors import ValidationError
 from trailproof.stores.base import TrailStore
 from trailproof.stores.memory import MemoryStore
-from trailproof.types import TrailEvent
+from trailproof.types import QueryFilters, QueryResult, TrailEvent
 
 
 class Trailproof:
@@ -130,6 +130,63 @@ class Trailproof:
         self._store.append(event)
 
         return event
+
+    def query(
+        self,
+        *,
+        event_type: str | None = None,
+        actor_id: str | None = None,
+        tenant_id: str | None = None,
+        trace_id: str | None = None,
+        session_id: str | None = None,
+        from_time: str | None = None,
+        to_time: str | None = None,
+        limit: int = 100,
+        cursor: str | None = None,
+    ) -> QueryResult:
+        """Query events with optional filters and cursor pagination.
+
+        All filter parameters are optional. No filters returns all events
+        up to the limit.
+
+        Args:
+            event_type: Filter by exact event type match.
+            actor_id: Filter by exact actor ID match.
+            tenant_id: Filter by exact tenant ID match.
+            trace_id: Filter by exact trace ID match.
+            session_id: Filter by exact session ID match.
+            from_time: Include events at or after this ISO-8601 timestamp.
+            to_time: Include events at or before this ISO-8601 timestamp.
+            limit: Maximum number of events to return (default 100).
+            cursor: Resume pagination from this event_id.
+
+        Returns:
+            QueryResult with matching events and optional next_cursor.
+        """
+        filters = QueryFilters(
+            event_type=event_type,
+            actor_id=actor_id,
+            tenant_id=tenant_id,
+            trace_id=trace_id,
+            session_id=session_id,
+            from_time=from_time,
+            to_time=to_time,
+            limit=limit,
+            cursor=cursor,
+        )
+        return self._store.query(filters)
+
+    def get_trace(self, trace_id: str) -> list[TrailEvent]:
+        """Return all events with the given trace_id, ordered by timestamp.
+
+        Args:
+            trace_id: The trace ID to filter by.
+
+        Returns:
+            List of matching events sorted by timestamp.
+        """
+        result = self._store.query(QueryFilters(trace_id=trace_id, limit=10_000))
+        return sorted(result.events, key=lambda e: e.timestamp)
 
     @staticmethod
     def _validate_required(field_name: str, value: str | None) -> None:
